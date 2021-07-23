@@ -1,125 +1,40 @@
-//"use strict";
-
-//======
-
-// class ParserFactory{
-//     constructor() {}
-//     register(hostName, constructor) {
-//         console.log(hostName, constructor)
-//     }
-
-// }
-// var parserFactory = new ParserFactory();
-
-// class Parser{}
-
-// var util = (function () {
-
-//     var hyperlinksToChapterList = function(contentElement, isChapterPredicate, getChapterArc) {
-//         console.log(contentElement)
-//     }
-// });
-
-// //======
-
-// parserFactory.register("69shu.com", function() { return new ShuParser() });
-
-// class ShuParser extends Parser{
-//     constructor() {
-//         super();
-//     }
-
-//     async getChapterUrls(dom) {
-        
-//         let tocUrl = dom.querySelector("a.more-btn").href;
-//         console.log("uydfghj : ", tocUrl)
-//         let toc = (await HttpClient.wrapFetch(tocUrl, this.makeOptions())).responseXML;
-//         let menu = toc.querySelector("#catalog");
-//         return util.hyperlinksToChapterList(menu);
-//     }
-
-//     findContent(dom) {
-//         return dom.querySelector("div.txtnav");
-//     };
-
-//     extractTitleImpl(dom) {
-//         return dom.querySelector("div.booknav2 h1").textContent;
-//     };
-
-//     findCoverImageUrl(dom) {
-//         return util.getFirstImgSrc(dom, "div.bookbox");
-//     }
-
-//     async fetchChapter(url) {
-//         // site does not tell us gb18030 is used to encode text
-//         return (await HttpClient.wrapFetch(url, this.makeOptions())).responseXML;
-//     }
-
-//     makeOptions() {
-//         return ({
-//             makeTextDecoder: () => new TextDecoder("gb18030")
-//         });
-//     }
-// }
-    
-// //===========================
-
-// //alert()
-// // shu = new ShuParser();
-// // var b = shu.makeOptions();
-// // console.log(b.makeTextDecoder())
-// //var c = new TextDecoder  //research
-
-
-// var shu2 = new ShuParser();
-
-// //get chapter data
-
-// var book_url = "/http_get?host" + "=" + "69shu.com&host_path=" + "/txt/1464.htm";
-// $.get(book_url, function(results, err){
-
-//     if(results == "html_error"){
-//         return console.log(results);
-//     }
-
-//     document.getElementById("request_html_container").innerHTML = results;
-//     //console.log(document.getElementById("request_html_container").querySelector("a.more-btn").href) //http://127.0.0.1:8080/1464/ //remove host and add the correct site host
-//     shu2.getChapterUrls(document.getElementById("request_html_container")) 
-// })
-
-
-
-
-// $.ajax({
-//     url: ,
-//     dataType: 'jsonp'​​​​,
-//     success: function(data) {
-//         console.log(data); //entire object here
-//         //another example
-//         // alert("Feed title: " + data.feed.title.$t);
-//     }
-// });​
-// $.ajax({
-//     url : 'http://www.69shu.com/txt/1464.htm',
-//     dataType : 'jsonp'​​​​,
-//     success: function(data){
-//         console.log(data)
-//     }
-// })
-
-//========================
-
-
-
-//https://a-t.nu/novel/linker/
 
 //----------reusables functions
-
+function div_inner_html(html_div_id = "", html_div_value = ""){//inner html
+    document.getElementById(html_div_id).innerHTML = html_div_value;
+}
+function div_input_value(html_input_id = "", html_input_value = ""){//inner html
+    document.getElementById(html_input_id).value = html_input_value;
+}
+function window_open_blank(url){//window open
+    window.open(url,"_blank");//new window
+}
 function div_hide_show(div_id, action="show"){//hide or show div
     if(action != "show"){
         return document.getElementById(div_id).style.display = "none";
     }
     document.getElementById(div_id).style.display = "block";
+}
+function alert_box_1(alert_text = "!! Are you sure", yes_button = "", no_button = "", alert_type = "confirm" ){//give yes or no alert confirm box//yes or no can be return function or whatever suitable\
+
+    var yep = "";//yes 
+    var nope = "";//no
+
+    if(no_button || no_button.trim().length > 0){//if no button is given
+        nope = nope + ',' + no_button;
+    }
+    if(yes_button || yes_button.trim().length > 0){//if no button is given
+        yep = yep + ',' + yes_button;
+    }
+
+    document.getElementById("alert_box_1_text").innerHTML=alert_text;//add alert box message;
+    if(alert_type == "confirm"){ //add yes ;no buttons
+        document.getElementById("alert_box_1_buttons").innerHTML = `<button style="width:150px;height: 25px;background-color: #D40000;border: 2px solid #830404;display: inline-block;border-radius: 30px;margin-left: -21px;color:white" onclick='div_hide_show("alert_box_1", "hide")${yep}'>Yep</button><button style="width:150px;height: 25px;background-color: #90C418;border: 2px solid #597D04;display: inline-block;border-radius: 30px;color:white"  onclick='div_hide_show("alert_box_1", "hide")${nope}'>Nope</button>`;//add buttons, with onclick already embedded
+    }
+    if(alert_type != "confirm"){ //add okay button//simple alert boc
+        document.getElementById("alert_box_1_buttons").innerHTML = `<button style="width:150px;height: 25px;background-color: #D40000;border: 2px solid #830404;display: inline-block;border-radius: 30px;margin-left: -21px;color:white" onclick='div_hide_show("alert_box_1", "hide")${yep}'>Alright</button>`;//add buttons, with onclick already embedded
+    }
+    div_hide_show("alert_box_1");//show alert
 }
 
 //menu windows underlay layer
@@ -139,7 +54,6 @@ function main_menu_upper_layer_hide(){//so i can save mental energy en not menta
     }   
 }
 
-
 function alert_1(display="show"){//please wait alert
     if(display == "hide"){
         return document.getElementById("please_wait_1").style.display = "none";
@@ -147,8 +61,35 @@ function alert_1(display="show"){//please wait alert
     document.getElementById("please_wait_1").style.display = "block";
 }
 
+//=====================================================================
 
-function rectrive_book_webpage(book_url){//send website to server to request webpage
+//++++++++++++++ url main help button
+function url_main_help_button(){//open help image
+    window.open('/imgs/url_main_help.png', '_blank');
+}
+
+
+// ----------------------------------- enter book url contents (menu 1)  -----------------------------------
+
+//++++++++++++++++++++++ book url 
+
+$("#convert_to_epub_main_input").on('keypress',function(event){//set event listner on table of content url input box
+    if(event.keyCode == 13){
+        
+        var table_of_content_url = document.getElementById("convert_to_epub_main_input").value;
+        console.log(table_of_content_url)
+
+        if(table_of_content_url.trim().length < 5 ){//give link error if its shorter than 5 characters
+            return alert_box_1(alert_text = "Book TOC link is not provided, or link letters are less than 5.", "", "", "alert" );//give alert//simple alert
+        }
+    
+        rectrive_book_webpage(table_of_content_url)//call website content retriever
+    }
+});
+
+//send website to server to request webpage
+function rectrive_book_webpage(book_url){
+    console.log(book_url)
     alert_1("show")//show wait alert
     //clean book link/url
     // book_url = book_url.replace("http://","").replace("https://","");
@@ -156,7 +97,8 @@ function rectrive_book_webpage(book_url){//send website to server to request web
     $.get( "/http_get?site="+book_url, function(results, err){
 
         if(results == "html_error"){
-            alert("Error retrieving book contents.")
+            //alert("Error retrieving book contents.")
+            alert_box_1(alert_text = "Error retrieving book contents.", "", "", "alert" );//give alert//simple alert
             alert_1("hide")//hide wait alert
             return console.log(results);
         }
@@ -166,20 +108,19 @@ function rectrive_book_webpage(book_url){//send website to server to request web
         alert_1("hide")//hide wait alert
     })
 }
-//=====================================================================
 
 
-//++++++++++++++++++++++++++++ get chapters
+//get book chapters
 var chapter_links_container = {
     book_chapters : [],
     book_cover_image_link : "",
     book_website_link : "",
     book_name : "",
-    book_language : "",
-    book_author : "",
+    book_language : "<unknown>",
+    book_author : "<unknown>",
 };
 
-function dom_chapter_retriever(dom){
+function dom_chapter_retriever(dom){ //director module 'guts'
 
     //select html element containing chapters
     document.getElementById("request_html_container").querySelectorAll("li.wp-manga-chapter.free-chap a").forEach(function(data){
@@ -198,16 +139,68 @@ function dom_chapter_retriever(dom){
         //get book language 
         chapter_links_container.book_language = ""//change html from server, //insteat of tranferring body dom make it transfer outer <html> or have one transfer outer html and extract language while the outer continue as normal
     })
+    // console.log(chapter_links_container);
+    porpulate_book_details_on_menu();//show bok detail viewer
+}
+
+//+++++++++ book details view
+var chapters_tracker_array = [];//tracks chapters added to book viewer menu 
+function porpulate_book_details_on_menu(){
+    //book details
+    div_input_value("book_name", chapter_links_container.book_name );//book name
+
+    div_input_value("book_author", chapter_links_container.book_author );//book author
+
+    div_input_value("book_language", chapter_links_container.book_language );//book language
+
+    div_input_value("book_save_name", chapter_links_container.book_name  );//book save name
+
+    div_input_value("book_cover_image_link", chapter_links_container.book_cover_image_link );//book image link
+    document.getElementById("book_cover_image").src = chapter_links_container.book_cover_image_link ;//book image
+
+    // sating chapters// ending chapter
+    var start_chapters = "";
+    var ending_chapters = "";
+    var chapters_selection = "";
+
+    chapter_links_container.book_chapters.forEach(function (chapter_details, index){
+
+        start_chapters = start_chapters + `<option value="${index}" style="background-color: #0a0a0a;">${chapter_details.chapter_link_text}</option>`;
+        ending_chapters = ending_chapters + `<option value="${index}" style="background-color: #0a0a0a;">${chapter_details.chapter_link_text}</option>`;
+        chapters_selection = chapters_selection + `
+            <div style="width: 80%;height: 50px;margin:5px auto;">
+                <input id="chapter_${index}_inout" type="checkbox" style="width: 20px; height: 100%;margin: 0px 10px;">
+                <div style="width: 60%;height: 100%;font-size: 13px;text-align: center;overflow-x: auto;color:white;display: inline-block;vertical-align: top;line-height: 50px;">
+                    ${chapter_details.chapter_link_text}
+                </div>
+                <button style="width: 53px;height: 50%;background-color:black;border:1px solid white;border-radius: 23px;vertical-align: top;color: white;margin-top: 13px;float: right;" onclick="window_open_blank('${chapter_details.chapter_link}')">
+                    Open
+                </button>
+            </div>`;
+
+        chapters_tracker_array.unshift();//save chapters according to how they added to viewer menu
+
+        //show bookd details viewer menu
+        div_hide_show("book_details_viewer_container");//show
+    });
     
-    console.log(chapter_links_container);
+    //start/end chapters show
+    div_inner_html("book_starting_chapter_selection", start_chapters );//start process on chapter
+    div_inner_html("book_ending_chapter_selection", ending_chapters );//end process on chapter
+    //selected director module
+
+    //chapter selection
+    div_inner_html("chapters_selection_container", chapters_selection );
+}
+
+// director module view//module for book site scraping
+function view_director_module(){
+    alert_box_1(`View '<b style="color:#D40000">${ document.getElementById("book_selected_director_module").value}</b>' director module intestines?`, "","");//give alert
 }
 
 
 
-
-
-
-
+//++++++++++ book packing to epub
 
 
 
