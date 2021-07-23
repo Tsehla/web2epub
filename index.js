@@ -230,10 +230,18 @@ app.get('/http_get', function(req,res){
 
     (async function main() {
         try {
-            var browser = await puppeteer.launch({ headless: true,  'args' : [
-                '--no-sandbox',
-                '--disable-setuid-sandbox'
-              ] });
+            // var browser = await puppeteer.launch({ headless: true });
+            var browser = await puppeteer.launch({
+                headless: true,
+                defaultViewport: null,
+                args: [
+                    "--incognito",
+                    "--no-sandbox",
+                    "--single-process",
+                    "--no-zygote"
+                ],
+            });
+ 
             var [page] = await browser.pages();
 
             // await page.goto('https://fengyuanchen.github.io/viewerjs/');
