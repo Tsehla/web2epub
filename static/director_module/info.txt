@@ -1,0 +1,25 @@
+The director modules are saved with website name/domain name,
+if the is a repeat of name which will likely be for custom Dmodules then the wil be a number befor then domain name followed by ,js
+
+a-t.nu.js
+1 a-t.nu.js
+2 a-t.nu.js
+3 a-t.nu.js
+4 a-t.nu.js
+
+system will use the default director module, i.e non custom,if there more than one, if only custom is available then it will use first custom it gets
+if default is available and there is custom versions defined, user will have to select custom version to override default choosing
+
+
+
+//////////////////
+
+mudule layout
+
+module export module name will be domain main, there is no need for preceding module number if many modules, as modules will be used for that session if they match then discarded
+
+example module contents for 
+
+exportexports.toc_extracts_director = function(){// table of contents page, contents extractions
+    console.log("module loaded");
+}

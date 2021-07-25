@@ -96,14 +96,22 @@ function rectrive_book_webpage(book_url){
     //request html
     $.get( "/http_get?site="+book_url, function(results, err){
 
-        if(results == "html_error"){
+        if(results == "html_error"){//website connection problem/server or book source
             //alert("Error retrieving book contents.")
             alert_box_1(alert_text = "Error retrieving book contents.", "", "", "alert" );//give alert//simple alert
             alert_1("hide")//hide wait alert
             return console.log(results);
         }
+        if(results == "module_error"){//module not aailable
+            //alert("Error retrieving book contents.")
+            alert_box_1(alert_text = "Error retrieving book contents. <br/> We dont have a default <b>Director Module</b> defined for the website link. Select Custom/user created Director Module amongst those available or create one", "", "", "alert" );//give alert//simple alert
+            alert_1("hide")//hide wait alert
+            //show bookd details viewer menu
+            div_hide_show("book_details_viewer_container");//show
+            return console.log(results);
+        }
         //console.log(results);
-        document.getElementById("request_html_container").innerHTML = results; 
+        document.getElementById("request_html_container").innerHTML = results.page_dom; 
         dom_chapter_retriever(results)
         alert_1("hide")//hide wait alert
     })
@@ -120,27 +128,33 @@ var chapter_links_container = {
     book_author : "<unknown>",
 };
 
+
 function dom_chapter_retriever(dom){ //director module 'guts'
 
-    //select html element containing chapters
-    document.getElementById("request_html_container").querySelectorAll("li.wp-manga-chapter.free-chap a").forEach(function(data){
-        //loop through result and save link with its text or title
-        chapter_links_container.book_chapters.unshift({
-            chapter_link : data.href.trim(),
-            chapter_link_text : data.textContent.trim(),
-        })
-        //get book cover image link
-        chapter_links_container.book_cover_image_link = document.getElementById("request_html_container").querySelectorAll("div.tab-before-content img")[0].src//query selectorAll returns an array
-        //get book Name and link
-        chapter_links_container.book_website_link = document.getElementById("request_html_container").querySelectorAll("ol.breadcrumb li a")[1].href//book link on website
-        chapter_links_container.book_name = document.getElementById("request_html_container").querySelectorAll("ol.breadcrumb li")[1].textContent.trim()//book name, taken from book link url name
-        //get book author
-        chapter_links_container.book_author = "<unknown>";
-        //get book language 
-        chapter_links_container.book_language = ""//change html from server, //insteat of tranferring body dom make it transfer outer <html> or have one transfer outer html and extract language while the outer continue as normal
-    })
+    // //select html element containing chapters
+    // document.getElementById("request_html_container").querySelectorAll("li.wp-manga-chapter.free-chap a").forEach(function(data){
+    //     //loop through result and save link with its text or title
+    //     chapter_links_container.book_chapters.unshift({
+    //         chapter_link : data.href.trim(),
+    //         chapter_link_text : data.textContent.trim(),
+    //     })
+    //     //get book cover image link
+    //     chapter_links_container.book_cover_image_link = document.getElementById("request_html_container").querySelectorAll("div.tab-before-content img")[0].src//query selectorAll returns an array
+    //     //get book Name and link
+    //     chapter_links_container.book_website_link = document.getElementById("request_html_container").querySelectorAll("ol.breadcrumb li a")[1].href//book link on website
+    //     chapter_links_container.book_name = document.getElementById("request_html_container").querySelectorAll("ol.breadcrumb li")[1].textContent.trim()//book name, taken from book link url name
+    //     //get book author
+    //     chapter_links_container.book_author = "<unknown>";
+    //     //get book language 
+    //     chapter_links_container.book_language = ""//change html from server, //insteat of tranferring body dom make it transfer outer <html> or have one transfer outer html and extract language while the outer continue as normal
+    // })
+
+ $.getScript("./director_module/" + dom.director_module_to_use + ".js",async function(response,status){
+        toc_contents_scraping();//call retrieved module function
+        porpulate_book_details_on_menu();//call book infor porpulate;//attempted to send function call inside module, to alliviate any possible to be problem during usage//but rather kee module file simple possible
+ });
     // console.log(chapter_links_container);
-    porpulate_book_details_on_menu();//show bok detail viewer
+    // porpulate_book_details_on_menu();//show bok detail viewer
 }
 
 //+++++++++ book details view
@@ -166,7 +180,13 @@ function porpulate_book_details_on_menu(){
     chapter_links_container.book_chapters.forEach(function (chapter_details, index){
 
         start_chapters = start_chapters + `<option value="${index}" style="background-color: #0a0a0a;">${chapter_details.chapter_link_text}</option>`;
-        ending_chapters = ending_chapters + `<option value="${index}" style="background-color: #0a0a0a;">${chapter_details.chapter_link_text}</option>`;
+        if(chapter_links_container.book_chapters.length !== index -1){
+            ending_chapters = ending_chapters + `<option value="${index}" style="background-color: #0a0a0a;" >${chapter_details.chapter_link_text}</option>`;
+        }
+        if(chapter_links_container.book_chapters.length == index +1){
+            ending_chapters = ending_chapters + `<option value="${index}" style="background-color: #0a0a0a;" selected >${chapter_details.chapter_link_text}</option>`;
+        }
+        
         chapters_selection = chapters_selection + `
             <div style="width: 80%;height: 50px;margin:5px auto;">
                 <input id="chapter_${index}_inout" type="checkbox" style="width: 20px; height: 100%;margin: 0px 10px;">
@@ -183,7 +203,7 @@ function porpulate_book_details_on_menu(){
         //show bookd details viewer menu
         div_hide_show("book_details_viewer_container");//show
     });
-    
+
     //start/end chapters show
     div_inner_html("book_starting_chapter_selection", start_chapters );//start process on chapter
     div_inner_html("book_ending_chapter_selection", ending_chapters );//end process on chapter

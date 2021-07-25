@@ -22,6 +22,9 @@ const https = require('https')
 //current server 
 var os = require("os");
 
+//file system
+var file_system = require("fs");
+
 // ==================== mongo db first run configs ====================
 
 // var mongo_url = process.env.MongoDB_URL || "mongodb://localhost:27017/zarhub_app_db";//connect remote db if provided or local
@@ -136,101 +139,77 @@ var os = require("os");
 
 app.get('/http_get', function(req,res){
 
-   // {"host":"127.0.0.1:8080","connection":"keep-alive","pragma":"no-cache","cache-control":"no-cache","sec-ch-ua":"\" Not;A Brand\";v=\"99\", \"Google Chrome\";v=\"91\", \"Chromium\";v=\"91\"","accept":"*/*","x-requested-with":"XMLHttpRequest","sec-ch-ua-mobile":"?0","user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36","sec-fetch-site":"same-origin","sec-fetch-mode":"cors","sec-fetch-dest":"empty","referer":"http://127.0.0.1:8080/","accept-encoding":"gzip, deflate, br","accept-language":"en-US,en;q=0.9","cookie":"language=en-US; XSRF-TOKEN=IOkLe78dNB47aa318ba2559070462823b7a6519fef3438f9df"}
+    //++++++++++++++++++ check if module is available in directory
+    var cleaned_site_domain_url = "";//store book domain name, to be used to find director module
+       
+    (function require_director(){//since theres failure to have director module do dom querying on nodjs process due to data imcompertibility between nodejs and DOM object, theres no need to have this function here any more since i changed my approah, but ohwell i like the function en keeping it beside it still works en if partly compared to what it was intended to do
+        //get wesite domain
+        var original_site_domain_url = req.query.site.toLowerCase().replace("http://www", "").replace("https://www","").replace("http://", "").replace("https://","").split("");//remove those//then turn to array
 
-    // const options = {
-    //     hostname: req.query.host,
-    //     port: 443,
-    //     path: req.query.host_path,
-    //     method: 'GET',
-    // }
 
-    // var headers = {}
-    // var hearders = req.headers;
-    // if(req.headers["host"]){
-    //     hearders["host"]=req.headers["host"]
-    // }
-    // if(req.headers["connection"]){
-    //     hearders["connection"]=req.headers["connection"]
-    // }
-    // if(req.headers["pragma"]){
-    //     hearders["pragma"]=req.headers["pragma"]
-    // }
-    // if(req.headers["cache-control"]){
-    //     hearders["cache-control"]=req.headers["cache-control"]
-    // }
-    // if(req.headers["sec-ch-ua"]){
-    //     hearders["sec-ch-ua"]=req.headers["sec-ch-ua"]
-    // }
-    // if(req.headers["accept"]){
-    //     hearders["accept"]=req.headers["accept"]
-    // }
-    // if(req.headers["x-requested-with"]){
-    //     hearders["x-requested-with"]=req.headers["x-requested-with"]
-    // }
-    // if(req.headers["sec-ch-ua-mobile"]){
-    //     hearders["sec-ch-ua-mobile"]=req.headers["sec-ch-ua-mobile"]
-    // }
-    // if(req.headers["user-agent"]){
-    //     hearders["user-agent"]=req.headers["user-agent"]
-    // }
-    // if(req.headers["sec-fetch-site"]){
-    //     hearders["sec-fetch-site"]=req.headers["sec-fetch-site"]
-    // }
-    // if(req.headers["sec-fetch-mode"]){
-    //     hearders["sec-fetch-mode"]=req.headers["sec-fetch-mode"]
-    // }
-    // if(req.headers["sec-fetch-dest"]){
-    //     hearders["sec-fetch-dest"]=req.headers["sec-fetch-dest"]
-    // }
-    // if(req.headers["referer"]){ //"referer":"http://127.0.0.1:8080/"
-    //     hearders["referer"]=req.headers.host
-    // }
-    // if(req.headers["accept-encoding"]){
-    //     hearders["accept-encoding"]=req.headers["accept-encoding"]
-    // }
-    // if(req.headers["accept-language"]){
-    //     hearders["accept-language"]=req.headers["accept-language"]
-    // }
-    // if(req.headers["cookie"]){
-    //     hearders["cookie"]=req.headers["cookie"]
-    // }
-    // //add headrs to options
-    // options.headers = headers;
+        for(a of original_site_domain_url){//loop through url string turned array
+            
+            if(a == "/" || a == "?"){ //end loop if any of the array characters is any of those
+                break;
+            }
 
-    // const http_req = https.request(options, res_http => {
-    //     console.log(`statusCode: ${res_http.statusCode}`)
+            cleaned_site_domain_url = cleaned_site_domain_url + a;//connect array loop thingies to form a string which is our domain 
+        }
+        
 
-    //     res_http.on('data', html_data => {
-    //         res.send(html_data);
-    //     })
-    // })
+        // try{ //if avalable attache module table of content function to local variable
+        // //    var a= require("./static/director_module/" + cleaned_site_domain_url);
+        //     //director_module_to_use.toc_extracts_director();
+        //     // console.log(cleaned_site_domain_url)
+        //     if (file_system.existsSync("./static/director_module/" + cleaned_site_domain_url)) {
+        //         //file exists
+        //         console.log("director module found");
+        //         main();//call webpage retrieve
+        //       }
+        // }
+        // catch(error){//if not send error to user
+        //     console.log("require error", error);
+        
+        //     //create fs function to look for custom matching modules then use them +++++++
 
-    // http_req.on('error', error => {
-    //     res.send("html_error");
-    //     console.error(error)
-    // })
+        //   return res.send("module_error");
+        // }
+        file_system.access("./static/director_module/" + cleaned_site_domain_url + ".js", file_system.F_OK, (error) => {
+            if(error){
+                console.log("director module search error", error);
+                return res.send("module_error");
+            }
+          
+             //file exists
+             //console.log("director module found");
+             main();//call webpage retrieve
+        })
 
-    // http_req.end()
+    })()
 
-    // const request = require('request');
-    
-    // request(req.query.site, { json: true }, (err, res_html, body) => {
+ 
 
-    // if (err) { 
-    //     console.log("html_error -> ", err);
-    //     return res.send("html_error");
-    // }
-    //     console.log(body)
-    //     res.send(body);
-    // });
+    // // +++++++++++++++++ open pupeteer browser
+    // //alow proxy usage function
 
+    // var chapter_links_container = {//book details holder
+    //     book_chapters : [],
+    //     book_cover_image_link : "",
+    //     book_website_link : "",
+    //     book_name : "",
+    //     book_language : "<unknown>",
+    //     book_author : "<unknown>",
+    //     director_modules : [],
+    //     selected_director_module: "",
+    // };
 
     const puppeteer = require('puppeteer');
 
-    (async function main() {
+    // (async function main() {
+    async function main() {
         try {
             // var browser = await puppeteer.launch({ headless: true });
+            // to work on heroku options below required and more
             var browser = await puppeteer.launch({
                 headless: true,
                 defaultViewport: null,
@@ -241,21 +220,18 @@ app.get('/http_get', function(req,res){
                     "--no-zygote"
                 ],
             });
- 
-            var [page] = await browser.pages();
-
-            // await page.goto('https://fengyuanchen.github.io/viewerjs/');
-
-            // await page.click('[data-original="images/tibet-1.jpg"]');
-            // await page.waitForSelector('.viewer-move.viewer-transition');
-
-            // const viewer = await page.$eval('.viewer-move.viewer-transition', el => el.outerHTML);
+             var [page] = await browser.pages();
+            // var page = await browser.newPage();
 
             await page.goto(req.query.site, {waitUntil: 'networkidle0'});
 
             var  page_body = await page.$eval('body', el => el.outerHTML);
 
-            res.send(page_body);
+            res.send({director_module_to_use :cleaned_site_domain_url,page_dom:page_body});
+
+            // var  page_body =  await director_module_to_use.toc_extracts_director(page);
+
+            // console.log("---------",page_body);
 
             await browser.close();
 
@@ -263,9 +239,12 @@ app.get('/http_get', function(req,res){
             console.error(err);
             res.send("html_error");
         }
-    })();
-})
+    // })();
+    };
 
+
+}) //page content retrive allow timer option inbetween==================================================================================================================================
+ 
 
 
 // profile short link check
@@ -298,7 +277,29 @@ app.get("/profile_link_view", function(req, res){
     
     // })
 
-})
+
+
+
+    //call pupeteer and collect webpages files
+    const epub = require('epub-gen');
+
+    const options = {
+    title: 'Moby-Dick',
+    author: 'Herman Melville',
+    output: './moby-dick.epub',
+    content: [
+        {
+        title: 'Chapter 1: Loomings',
+        data: `<p>
+            Call me Ishmael. Some years ago—never mind how long precisely
+        </p>`
+        }
+    ]
+    };
+
+    new epub(options).promise.then(() => console.log('Done'));
+
+    })
 
 
 //Profile link create
