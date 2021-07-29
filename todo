@@ -1,9 +1,9 @@
------------
-app.get('/http_get', function(req,res){ //create fs function to look for custom matching modules then use them +++++++
-----------
+
  // +++++++++++++++++ open pupeteer browser
     //alow proxy usage function
 -----------
-if(req.resourceType() == 'stylesheet' || req.resourceType() == 'font' || req.resourceType() == 'image' || req.resourceType()  ){ //ad more resource types
-------------
+option to disable javascript
+ await page.on('request', function(req){
+            if(req.resourceType() == 'stylesheet' || req.resourceType() == 'font' || req.resourceType() == 'image' || req.resourceType() == "imageset" || req.resourceType() == "media" ){ //ad more resource types//if page requested contents matche
 
+------------

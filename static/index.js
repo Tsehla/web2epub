@@ -131,6 +131,16 @@ var chapter_links_container = {
 
 function dom_chapter_retriever(dom){ //director module 'guts'
 
+
+    chapter_links_container = { //clear of old contents
+        book_chapters : [],
+        book_cover_image_link : "",
+        book_website_link : "",
+        book_name : "",
+        book_language : "<unknown>",
+        book_author : "<unknown>",
+    };
+
     // //select html element containing chapters
     // document.getElementById("request_html_container").querySelectorAll("li.wp-manga-chapter.free-chap a").forEach(function(data){
     //     //loop through result and save link with its text or title
@@ -160,7 +170,10 @@ function dom_chapter_retriever(dom){ //director module 'guts'
 //+++++++++ book details view
 var chapters_tracker_array = [];//tracks chapters added to book viewer menu 
 function porpulate_book_details_on_menu(){
+    
+    chapters_tracker_array = [];//empty book chapers containers
     //book details
+
     div_input_value("book_name", chapter_links_container.book_name );//book name
 
     div_input_value("book_author", chapter_links_container.book_author );//book author

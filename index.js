@@ -148,7 +148,7 @@ var  browser = null;//browser intance refer variable
         // to work on heroku options below required and more
        browser = await puppeteer.launch({
             headless: true,
-            defaultViewport: null,
+            // defaultViewport: null,
             args: [
                 "--incognito",
                 "--no-sandbox",
@@ -174,6 +174,7 @@ var  browser = null;//browser intance refer variable
     } catch (err) {
         console.error(err);
         res.send("html_error");
+        next(err)
     }
 
 })();//auto run
@@ -186,30 +187,33 @@ async function page_process(res,req,cleaned_site_domain_url){
          var [page] = await browser.pages();
         // var page = await browser.newPage();
 
-        await page.goto(req.query.site, {waitUntil: 'networkidle0'});
+        
         await page.setViewport({ width:1920, height:1080})//set browser page scren size
         await page.setRequestInterception(true);//intercept page external/internal url
+       
 
-        page.on('request', function(req){
-            if(req.resourceType() == 'stylesheet' || req.resourceType() == 'font' || req.resourceType() == 'image' || req.resourceType()  ){ //ad more resource types//if page requested contents matches
-                req.abort();//cancell request
+        await page.on('request', function(req){
+            if(req.resourceType() == 'stylesheet' || req.resourceType() == 'font' || req.resourceType() == 'image' || req.resourceType() == "imageset" || req.resourceType() == "media" ){ //ad more resource types//if page requested contents matches
+                req.abort().catch((err)=>err);//cancell request
             }
             else {
-                req.continue(); //else continue loading
+                req.continue().catch((err)=>err);//cancell request; //else continue loading
             }
         });
+        await page.goto(req.query.site, {waitUntil: 'networkidle0'});
 
         var  page_body = await page.$eval('body', el => el.outerHTML);
-
+        // console.log((await browser.pages()).length)//total open pages/tabs
 
         res.send({director_module_to_use :cleaned_site_domain_url,page_dom:page_body});
 
-        await page.close();//close browser page
+        // return page.close();//close browser page //issue causes browser to exit
         // await browser.close();// close chrome browser
-
+       
     } catch (err) {
         console.error(err);
         res.send("html_error");
+       
     }
 
 }
