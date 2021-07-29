@@ -137,6 +137,84 @@ var file_system = require("fs");
 // });
 
 
+//puppeteer launch on server start
+
+const puppeteer = require('puppeteer');
+var  browser = null;//browser intance refer variable
+
+(async function main() {
+    try {
+        // var browser = await puppeteer.launch({ headless: true });
+        // to work on heroku options below required and more
+       browser = await puppeteer.launch({
+            headless: true,
+            defaultViewport: null,
+            args: [
+                "--incognito",
+                "--no-sandbox",
+                "--single-process",
+                "--no-zygote"
+            ],
+        });
+        //  var [page] = await browser.pages();
+        // // var page = await browser.newPage();
+
+        // await page.goto(req.query.site, {waitUntil: 'networkidle0'});
+
+        // var  page_body = await page.$eval('body', el => el.outerHTML);
+
+        // res.send({director_module_to_use :cleaned_site_domain_url,page_dom:page_body});
+
+        // // var  page_body =  await director_module_to_use.toc_extracts_director(page);
+
+        // // console.log("---------",page_body);
+
+        // await browser.close();
+
+    } catch (err) {
+        console.error(err);
+        res.send("html_error");
+    }
+
+})();//auto run
+
+//puppeter page propres
+async function page_process(res,req,cleaned_site_domain_url){
+
+    try {
+
+         var [page] = await browser.pages();
+        // var page = await browser.newPage();
+
+        await page.goto(req.query.site, {waitUntil: 'networkidle0'});
+        await page.setViewport({ width:1920, height:1080})//set browser page scren size
+        await page.setRequestInterception(true);//intercept page external/internal url
+
+        page.on('request', function(req){
+            if(req.resourceType() == 'stylesheet' || req.resourceType() == 'font' || req.resourceType() == 'image' || req.resourceType()  ){ //ad more resource types//if page requested contents matches
+                req.abort();//cancell request
+            }
+            else {
+                req.continue(); //else continue loading
+            }
+        });
+
+        var  page_body = await page.$eval('body', el => el.outerHTML);
+
+
+        res.send({director_module_to_use :cleaned_site_domain_url,page_dom:page_body});
+
+        await page.close();//close browser page
+        // await browser.close();// close chrome browser
+
+    } catch (err) {
+        console.error(err);
+        res.send("html_error");
+    }
+
+}
+
+
 app.get('/http_get', function(req,res){
 
     //++++++++++++++++++ check if module is available in directory
@@ -180,10 +258,22 @@ app.get('/http_get', function(req,res){
                 return res.send("module_error");
             }
           
-             //file exists
-             //console.log("director module found");
-             main();//call webpage retrieve
-        })
+            //  //file exists
+            //  //console.log("director module found");
+            //  main();//call webpage retrieve
+
+            //check if browser is open
+
+            if(browser){//if browser  is open
+                page_process(res,req,cleaned_site_domain_url );//process page requested//passing get request and response object
+            }
+
+            if(!browser){//if browser  is not opened
+                main()//attempt browser opening
+                require_director();//then rerun this function
+            }
+            
+        });
 
     })()
 
@@ -203,44 +293,44 @@ app.get('/http_get', function(req,res){
     //     selected_director_module: "",
     // };
 
-    const puppeteer = require('puppeteer');
+    // const puppeteer = require('puppeteer');
 
-    // (async function main() {
-    async function main() {
-        try {
-            // var browser = await puppeteer.launch({ headless: true });
-            // to work on heroku options below required and more
-            var browser = await puppeteer.launch({
-                headless: true,
-                defaultViewport: null,
-                args: [
-                    "--incognito",
-                    "--no-sandbox",
-                    "--single-process",
-                    "--no-zygote"
-                ],
-            });
-             var [page] = await browser.pages();
-            // var page = await browser.newPage();
+    // // (async function main() {
+    // async function main() {
+    //     try {
+    //         // var browser = await puppeteer.launch({ headless: true });
+    //         // to work on heroku options below required and more
+    //         var browser = await puppeteer.launch({
+    //             headless: true,
+    //             defaultViewport: null,
+    //             args: [
+    //                 "--incognito",
+    //                 "--no-sandbox",
+    //                 "--single-process",
+    //                 "--no-zygote"
+    //             ],
+    //         });
+    //          var [page] = await browser.pages();
+    //         // var page = await browser.newPage();
 
-            await page.goto(req.query.site, {waitUntil: 'networkidle0'});
+    //         await page.goto(req.query.site, {waitUntil: 'networkidle0'});
 
-            var  page_body = await page.$eval('body', el => el.outerHTML);
+    //         var  page_body = await page.$eval('body', el => el.outerHTML);
 
-            res.send({director_module_to_use :cleaned_site_domain_url,page_dom:page_body});
+    //         res.send({director_module_to_use :cleaned_site_domain_url,page_dom:page_body});
 
-            // var  page_body =  await director_module_to_use.toc_extracts_director(page);
+    //         // var  page_body =  await director_module_to_use.toc_extracts_director(page);
 
-            // console.log("---------",page_body);
+    //         // console.log("---------",page_body);
 
-            await browser.close();
+    //         await browser.close();
 
-        } catch (err) {
-            console.error(err);
-            res.send("html_error");
-        }
-    // })();
-    };
+    //     } catch (err) {
+    //         console.error(err);
+    //         res.send("html_error");
+    //     }
+    // // })();
+    // };
 
 
 }) //page content retrive allow timer option inbetween==================================================================================================================================

@@ -4,3 +4,6 @@ app.get('/http_get', function(req,res){ //create fs function to look for custom 
  // +++++++++++++++++ open pupeteer browser
     //alow proxy usage function
 -----------
+if(req.resourceType() == 'stylesheet' || req.resourceType() == 'font' || req.resourceType() == 'image' || req.resourceType()  ){ //ad more resource types
+------------
+
