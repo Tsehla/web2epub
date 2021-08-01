@@ -7,3 +7,8 @@ option to disable javascript
             if(req.resourceType() == 'stylesheet' || req.resourceType() == 'font' || req.resourceType() == 'image' || req.resourceType() == "imageset" || req.resourceType() == "media" ){ //ad more resource types//if page requested contents matche
 
 ------------
+
+ //set download request timer. but kinda useless without a proxy
+ ----------
+ figure how to allow login session for pages that are paid
+ ----------

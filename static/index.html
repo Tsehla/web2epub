@@ -161,7 +161,7 @@
                             </button>
                         </div>
                         <div style="width: 100%;height:auto;text-align: center;margin-top: 25px;">
-                            <button style="width: 60%;max-width: 300px;height: 40px;background-color: white;color: black;border-radius: 10px;border: none;font-size: 18px;">
+                            <button style="width: 60%;max-width: 300px;height: 40px;background-color: white;color: black;border-radius: 10px;border: none;font-size: 18px;" onclick="epub_pack()">
                                 Pack Epub
                             </button>
                         </div>
@@ -198,16 +198,16 @@
                                 </select>
                             </div>
                         </div>
-                        <div style="width: 100%;height: 20px;text-align: center;color: white;font-size: 15px;margin-top: 10px;">
-                            Total Chapters : <b>9</b>
+                        <div style="width: 100%;height: 20px;text-align: center;color: white;font-size: 15px;margin-top: 10px;margin-top: 25px;color: #D40000;">
+                            Total Chapters : <b id="selection_total_chaters">9</b>
                         </div>
                         <div style="width: 100%;height:100px;">
                             <div style="width: 99%;max-width: 291px;height:100%;margin-left: auto;margin-right: auto;border: 1px solid white;margin-top: 53px;border-radius: 8px;font-size: 11px;min-width: 316px;">
                                 <div style="width: 100%;height:50%;">
-                                    <button style="width: 23%;height: 100%;background-color: white;margin-right: -6px;border-top-left-radius: 8px;/* font-size: 15px; */margin-left: auto;margin-right: auto;">
+                                    <button style="width: 23%;height: 100%;background-color: white;margin-right: -6px;border-top-left-radius: 8px;/* font-size: 15px; */margin-left: auto;margin-right: auto;" onclick="chapters_select_unselect_all('check-all')">
                                         Select all
                                     </button>
-                                    <button style="width: 32%;height: 100%;background-color: white;margin-right: 2px;/* font-size: 15px; */margin-left: auto;margin-right: auto;">
+                                    <button style="width: 32%;height: 100%;background-color: white;margin-right: 2px;/* font-size: 15px; */margin-left: auto;margin-right: auto;" onclick="chapters_select_unselect_all('uncheck-all')" >
                                         Unselect all
                                     </button>
                                     <button style="width: 43%;height: 100%;background-color: white;margin-left: -8px;border-top-right-radius: 8px;/* font-size: 15px; *//* font-size: 15px; */margin-left: auto;margin-right: auto;">
@@ -306,7 +306,6 @@
                 <img src="imgs/Tv icon.png" style="height: 41px;">
             </div>
         </div>
-
 
 
         <script type="text/javascript" src="jquery-3.3.1.min.js"></script>

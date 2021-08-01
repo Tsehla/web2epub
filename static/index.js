@@ -6,6 +6,12 @@ function div_inner_html(html_div_id = "", html_div_value = ""){//inner html
 function div_input_value(html_input_id = "", html_input_value = ""){//inner html
     document.getElementById(html_input_id).value = html_input_value;
 }
+function div_get_inut_value(html_input_id ){//get html input element value
+    document.getElementById(html_input_id ).value
+}
+function div_get_element_value(html_input_id = ""){//div html text value
+    document.getElementById(html_input_id).innerText;
+}
 function window_open_blank(url){//window open
     window.open(url,"_blank");//new window
 }
@@ -89,7 +95,7 @@ $("#convert_to_epub_main_input").on('keypress',function(event){//set event listn
 
 //send website to server to request webpage
 function rectrive_book_webpage(book_url){
-    console.log(book_url)
+   // console.log(book_url)
     alert_1("show")//show wait alert
     //clean book link/url
     // book_url = book_url.replace("http://","").replace("https://","");
@@ -128,7 +134,8 @@ var chapter_links_container = {
     book_author : "<unknown>",
 };
 
-
+var director_script_retrive = ""; //reference retrived director scriptfor specified website
+var director_module_link = "";//stores working module link
 function dom_chapter_retriever(dom){ //director module 'guts'
 
 
@@ -160,6 +167,7 @@ function dom_chapter_retriever(dom){ //director module 'guts'
     // })
 
  $.getScript("./director_module/" + dom.director_module_to_use + ".js",async function(response,status){
+        director_module_link = "./director_module/" + dom.director_module_to_use + ".js"; //save module link for later
         toc_contents_scraping();//call retrieved module function
         porpulate_book_details_on_menu();//call book infor porpulate;//attempted to send function call inside module, to alliviate any possible to be problem during usage//but rather kee module file simple possible
  });
@@ -188,21 +196,21 @@ function porpulate_book_details_on_menu(){
     // sating chapters// ending chapter
     var start_chapters = "";
     var ending_chapters = "";
-    var chapters_selection = "";
+    var chapters_selection = "";//contains chapter selection html to show
 
     chapter_links_container.book_chapters.forEach(function (chapter_details, index){
 
         start_chapters = start_chapters + `<option value="${index}" style="background-color: #0a0a0a;">${chapter_details.chapter_link_text}</option>`;
-        if(chapter_links_container.book_chapters.length !== index -1){
+        if(chapter_links_container.book_chapters.length -1 !== index ){//end before last chapter item
             ending_chapters = ending_chapters + `<option value="${index}" style="background-color: #0a0a0a;" >${chapter_details.chapter_link_text}</option>`;
         }
-        if(chapter_links_container.book_chapters.length == index +1){
+        if(chapter_links_container.book_chapters.length == index +1){//set last selection as selected
             ending_chapters = ending_chapters + `<option value="${index}" style="background-color: #0a0a0a;" selected >${chapter_details.chapter_link_text}</option>`;
         }
         
         chapters_selection = chapters_selection + `
             <div style="width: 80%;height: 50px;margin:5px auto;">
-                <input id="chapter_${index}_inout" type="checkbox" style="width: 20px; height: 100%;margin: 0px 10px;">
+                <input id="chapter_${index}_inout" type="checkbox" checked name="${index}" style="width: 20px; height: 100%;margin: 0px 10px;">
                 <div style="width: 60%;height: 100%;font-size: 13px;text-align: center;overflow-x: auto;color:white;display: inline-block;vertical-align: top;line-height: 50px;">
                     ${chapter_details.chapter_link_text}
                 </div>
@@ -219,7 +227,8 @@ function porpulate_book_details_on_menu(){
 
     //start/end chapters show
     div_inner_html("book_starting_chapter_selection", start_chapters );//start process on chapter
-    div_inner_html("book_ending_chapter_selection", ending_chapters );//end process on chapter
+    div_inner_html("book_ending_chapter_selection", ending_chapters );//end process on chapter 
+    div_inner_html("selection_total_chaters", chapter_links_container.book_chapters.length );//set chapters total
     //selected director module
 
     //chapter selection
@@ -231,10 +240,217 @@ function view_director_module(){
     alert_box_1(`View '<b style="color:#D40000">${ document.getElementById("book_selected_director_module").value}</b>' director module intestines?`, "","");//give alert
 }
 
+//------------------ multi book option/buttons
+//chapters select/unselect all
+function chapters_select_unselect_all(action_type){
 
+    //if unselect all
+    if(action_type == "uncheck-all"){
+        $('#chapters_selection_container input').each(function(){
+            $(this).prop('checked', false);
+        });
+    }
+
+    //if select all 
+    if(action_type == "check-all"){
+        $('#chapters_selection_container input').each(function(){
+            $(this).prop('checked', true);
+        });
+    }
+}
 
 //++++++++++ book packing to epub
+function epub_pack(){
 
+
+
+    //get book selected chapters
+    ////   check if quick select option is chosen and use it, if no change then check the second below {CHOOSING BELOW WILL CHECK OR UNCHEK CHAPTERS ON CHAPTER VIEW}
+    //// var selected_start_chapters = div_get_inut_value("book_starting_chapter_selection");//get book set start chapter
+    //// var selected_ending_chapters = div_get_inut_value("book_ending_chapter_selection");//get book end chapter
+
+      //retrive checked chapters only
+      var check_chapters_checkbox_array = [];//saved links to check chapters
+      var retrived_chapter_link_text = [];//save retrived and processed chapter text
+      var checked_book_divs = $('#chapters_selection_container input:checked');//get checked, checkboxex if any
+
+      if(checked_book_divs.length < 1){//check if any checkboxes were checked
+          return alert_box_1(`Select some chapters to transform to epub.`, "","","alert");//give alert;//if not give err
+      }
+      checked_book_divs.each(function() {//get input check within the div then loop 
+        check_chapters_checkbox_array.push(chapter_links_container.book_chapters[Number($(this).attr('name'))]);//get checkbox div node name, turn result to number, retrive chapter link matching position number in array indexes, save link to new array
+      });
+
+    //   console.log(check_chapters_checkbox_array)
+
+    //book advanced option ---------
+
+    //create epub 3 ---------
+
+    //set download request timer. but kinda useless without a proxy ------------
+
+
+    //request chapter webage from server
+    var chapter_number = 0;//track processed chapters
+
+    function request_chapter_webpage(){
+
+        $.get("/find_webpage?site=" + check_chapters_checkbox_array[chapter_number].chapter_link, async function(results, err){
+
+            if(results == "html_error" || err !== "success"){
+                console.log("chapter content request erro : " + err)
+                return  alert_box_1(`Error requestion ${check_chapters_checkbox_array[chapter_number].chapter_link_text}, from server .`, "","","alert");//give alert;//if not give err
+            }
+
+            //get chapteer book contents
+            // console.log(results);
+            document.getElementById("request_html_container").innerHTML = results.page_dom;
+
+            //retrieve book chapter text
+            $.getScript({ //make request synchronus or blocking
+                url : director_module_link, 
+                success : function(response,status){//retrive director module
+                    retrived_chapter_link_text.push({
+                        data:chapter_contents_scraping(), title: check_chapters_checkbox_array[chapter_number].chapter_link_text
+                 })//call book chapter director module scraping function
+                // request_epub_create();//call to check
+
+               // console.log(retrived_chapter_link_text)
+
+                // var dom_chapter_contents = document.querySelectorAll("div.text-left  p");
+                // var chapter_text = ""
+                // for(p_element of dom_chapter_contents){
+                //     console.log(p_element)
+                //  chapter_text = chapter_text + p_element.innerText;
+                // }
+             
+
+                    // let text = '';
+                    // for (const child of children(document.querySelector('div.text-left'))) {
+                    // if (child.nodeType === 1) {
+                    //     const before = window.getComputedStyle(child, '::before').getPropertyValue('content');
+                    //     if (before && before !== 'none') {
+                    //     text += before.replace(/^['"]/, '').replace(/['"]$/, '');
+                    //     }
+                    // } else if (child.nodeType === 3) {
+                    //     text += child.textContent;
+                    // }
+                    // }
+                    // console.log(text);
+                    // function children(node) {
+                    //     const ret = [];
+                    //     for (let i = 0; i < node.childNodes.length; i++) {
+                    //     const child = node.childNodes[i];
+                    //     ret.push(child, ...children(child));
+                    //     }
+                    //     return ret;
+                    // }
+                
+
+                    let text = [];
+                    // var a = 1
+                    var text_arrange = {
+                        before : "",
+                        middle : "",
+                        after : "",
+                    }
+
+                    for (const child of children(document.querySelector('div.text-left'))) {
+
+                        if (child.nodeType === 1) {
+
+                            const before = window.getComputedStyle(child, '::before').getPropertyValue('content');
+
+                                if (before && before !== 'none') {
+
+                                    // text.push(before.replace(/^['"]/, '').replace(/['"]$/, '') + "' B"+a +"'");
+                                    text_arrange.before = before.replace(/^['"]/, '').replace(/['"]$/, '');
+
+                                }
+                                const after = window.getComputedStyle(child, '::after').getPropertyValue('content');
+
+                                if (after && after !== 'none') {
+
+                                    //text.push(after.replace(/^['"]/, '').replace(/['"]$/, '')  + "' A"+a +"'");
+                                    text_arrange.after = after.replace(/^['"]/, '').replace(/['"]$/, '');
+                                }
+
+
+                        } 
+                        if (child.nodeType === 3) {
+
+                            // text.push(child.textContent  + "' N"+a +"'");
+                            text_arrange.middle = child.textContent;
+                            text.push( text_arrange.before + text_arrange.middle + text_arrange.after)
+
+
+                        }
+                        
+                        // x (child)
+                        //  a++
+                    }
+
+                    // function x (child){
+                    //     console.log('ddddddddd ',child.nodeType," :::::: ",child.outerText,"\r\n",child )
+
+                    // }
+                    console.log(text.toString());
+                    function children(node) {
+
+                        const ret = [];
+                        for (let i = 0; i < node.childNodes.length; i++) {
+                        const child = node.childNodes[i];
+                        ret.push(child, ...children(child));
+                        }
+                        // console.log(ret)
+                        return ret;
+                    }
+                },
+                async:false
+            });
+    
+        
+
+            //process next chapter
+            chapter_number = chapter_number + 1;//increment chapters retrieved tracker
+
+            if(chapter_number != check_chapters_checkbox_array.length ){//check if their are chapters to process
+                //if so call function
+                request_chapter_webpage();//
+            }
+           function request_epub_create(){
+                if(chapter_number + 1 == check_chapters_checkbox_array.length  ){
+                    console.log(chapter_number + 1 , check_chapters_checkbox_array.length)
+                    create_epub()
+                }
+           }     
+        })
+    }
+    request_chapter_webpage();//start chapter processing
+ 
+
+    //request epub of book from server
+    function create_epub(){
+
+        //get book details
+        var book_name = document.getElementById("book_name").value;//get book name
+        var book_author = document.getElementById("book_author").value;//get book author
+        var book_language = document.getElementById("book_language").value;//get book language
+        var book_save_name = document.getElementById("book_save_name").value;//get book save name
+        var book_cover_image_link = document.getElementById("book_cover_image_link").value;//get book cover image url
+
+        console.log(retrived_chapter_link_text.toString())
+        $.post("/cook_epub" ,{book_name:book_name,book_author:book_author,book_language:book_language,book_save_name:book_save_name,book_cover_image_link:book_cover_image_link,book_chapters:retrived_chapter_link_text}, function(results, err){
+    
+            if(results == "html_error" || err !== "success"){
+    
+            }
+            //give download link
+            console.log(results,err);
+        });
+    }
+
+}
 
 
 

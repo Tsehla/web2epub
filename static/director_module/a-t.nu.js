@@ -30,6 +30,22 @@ function toc_contents_scraping(){
 //chapter contents scraping
 function chapter_contents_scraping(){
 
-    //chapter director module contents
+    // document.getElementById("request_html_container").style.display = "block";
+    // document.getElementById("request_html_container").innerHTML = document.getElementById("request_html_container").querySelector(".reading-content").innerHTML
+
+    //+++++++++ save processed dom text
+    // return document.getElementById("request_html_container").querySelector(".reading-content").innerHTML.toString();
+    // return $(".reading-content").html()
+
+
+   var dom_chapter_contents = document.querySelectorAll("div.text-left  p");
+   var chapter_text = ""
+   for(p_element in dom_chapter_contents){
+    chapter_text = chapter_text + p_element.innerText;
+   }
+
+   return chapter_text;
+
+ 
 
 }
