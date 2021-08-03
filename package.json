@@ -20,10 +20,7 @@
   
   "buildpacks": [
     {
-      "url": "https://github.com/heroku/heroku-buildpack-pgbouncer"
-    },
-    {
-      "url": "heroku/ruby"
+      "url": "https://github.com/jontewks/puppeteer-heroku-buildpack.git"
     }
   ],
 
