@@ -492,7 +492,7 @@ app.get('/http_get', function(req,res){
         } catch (err) {
             console.error(err);
             res.send("html_error");
-            next(err)
+            // next(err)
         }
     }
 
