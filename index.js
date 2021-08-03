@@ -419,15 +419,10 @@ app.get('/http_get', function(req,res){
             // to work on heroku options below required and more
                     
             var browser = await puppeteer.launch({
-                        headless: true,
-                        // defaultViewport: null,
-                        args: [
-                            "--incognito",
-                            "--no-sandbox",
-                            "--single-process",
-                            "--no-zygote"
-                        ],
-                    });
+                    headless: true,
+                    // defaultViewport: null,
+                    args: ['--no-sandbox']
+                });
 
                 var [page] = await browser.pages();
                 // var page = await browser.newPage();
