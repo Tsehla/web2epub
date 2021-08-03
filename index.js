@@ -421,7 +421,7 @@ app.get('/http_get', function(req,res){
             var browser = await puppeteer.launch({
                     headless: true,
                     // defaultViewport: null,
-                    args: ['--no-sandbox']
+                    'args' : []
                 });
 
                 var [page] = await browser.pages();

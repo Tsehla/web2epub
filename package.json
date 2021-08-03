@@ -18,12 +18,6 @@
     "request": "^2.88.2"
   },
   
-  "buildpacks": [
-    {
-      "url": "https://github.com/jontewks/puppeteer-heroku-buildpack.git"
-    }
-  ],
-
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
