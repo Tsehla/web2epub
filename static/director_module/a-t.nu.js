@@ -30,22 +30,61 @@ function toc_contents_scraping(){
 //chapter contents scraping
 function chapter_contents_scraping(){
 
-    // document.getElementById("request_html_container").style.display = "block";
-    // document.getElementById("request_html_container").innerHTML = document.getElementById("request_html_container").querySelector(".reading-content").innerHTML
+    let text = "";
+    var text_arrange = {
+        before : "",
+        middle : "",
+        after : "",
+    }
 
-    //+++++++++ save processed dom text
-    // return document.getElementById("request_html_container").querySelector(".reading-content").innerHTML.toString();
-    // return $(".reading-content").html()
+    for (const child of children(document.querySelector('div.text-left'))) {
+
+        if (child.nodeType === 1) { //if node type is not normal
+
+            const before = window.getComputedStyle(child, '::before').getPropertyValue('content');//get before node content value
+
+                if (before && before !== 'none') {//check if before
+
+                    text_arrange.before = before.replace(/^['"]/, '').replace(/['"]$/, '');//clean retrived value en save to before object
+
+                }
+                const after = window.getComputedStyle(child, '::after').getPropertyValue('content');
+
+                if (after && after !== 'none') {
+
+                    text_arrange.after = after.replace(/^['"]/, '').replace(/['"]$/, '');
+                    
+                }
+        } 
+        if (child.nodeType === 3) {//check if its normal div node
+
+            if(child.textContent.search("::after") == -1 || child.textContent.search("::before") == -1){//check if it does not contain [ ::before / ::after will be contained by css in the page that defines the before/after content value ] if not contained, 
+                text_arrange.middle = child.textContent;// add to node content text to middle object
+
+               // text.push( text_arrange.before + text_arrange.middle + text_arrange.after)//arrange the text in right order and add sentence to array
+                text = text + text_arrange.before + text_arrange.middle + text_arrange.after;
+            }
+        }
+    }
 
 
-   var dom_chapter_contents = document.querySelectorAll("div.text-left  p");
-   var chapter_text = ""
-   for(p_element in dom_chapter_contents){
-    chapter_text = chapter_text + p_element.innerText;
-   }
+    // console.log(text.toString());
+    
+    function children(node) {//extract div element child nodes 
 
-   return chapter_text;
+        const ret = [];
 
- 
+        for (let i = 0; i < node.childNodes.length; i++) {
+
+            const child = node.childNodes[i];
+            ret.push(child, ...children(child));//save to array
+            
+        }
+        // console.log(ret)
+
+        return ret;
+    }
+
+   return text.toString();
 
 }

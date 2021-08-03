@@ -78,18 +78,19 @@ function url_main_help_button(){//open help image
 // ----------------------------------- enter book url contents (menu 1)  -----------------------------------
 
 //++++++++++++++++++++++ book url 
-
+var body_toc_book_name = "";//save book table of content url
 $("#convert_to_epub_main_input").on('keypress',function(event){//set event listner on table of content url input box
     if(event.keyCode == 13){
         
         var table_of_content_url = document.getElementById("convert_to_epub_main_input").value;
-        console.log(table_of_content_url)
+        // console.log(table_of_content_url)
 
         if(table_of_content_url.trim().length < 5 ){//give link error if its shorter than 5 characters
             return alert_box_1(alert_text = "Book TOC link is not provided, or link letters are less than 5.", "", "", "alert" );//give alert//simple alert
         }
     
         rectrive_book_webpage(table_of_content_url)//call website content retriever
+        body_toc_book_name = table_of_content_url;//save
     }
 });
 
@@ -262,7 +263,7 @@ function chapters_select_unselect_all(action_type){
 //++++++++++ book packing to epub
 function epub_pack(){
 
-
+  
 
     //get book selected chapters
     ////   check if quick select option is chosen and use it, if no change then check the second below {CHOOSING BELOW WILL CHECK OR UNCHEK CHAPTERS ON CHAPTER VIEW}
@@ -272,9 +273,51 @@ function epub_pack(){
       //retrive checked chapters only
       var check_chapters_checkbox_array = [];//saved links to check chapters
       var retrived_chapter_link_text = [];//save retrived and processed chapter text
+
+    //cover image
+    //get wesite domain
+    var original_site_domain_url = document.getElementById("book_cover_image_link").value.toLowerCase().replace("http://www", "").replace("https://www","").replace("http://", "").replace("https://","").split("");//remove those//then turn to array
+
+    var cleaned_site_domain_url ="";//final book site domain
+
+    for(a of original_site_domain_url){//loop through url string turned array
+            
+        if(a == "/" || a == "?"){ //end loop if any of the array characters is any of those
+            break;
+        }
+
+        cleaned_site_domain_url = cleaned_site_domain_url + a;//connect array loop thingies to form a string which is our domain 
+    }
+
+    retrived_chapter_link_text.push({ //add book toc
+        title: document.getElementById("book_name").value,
+        data: `<div style="width:100%;height:100%;text-align:center">
+            <img src="${document.getElementById("book_cover_image_link").value}" style="width:100%;margin-top:20%;margin-left:auto;margin-right:auto">
+            <div style="width:100%;height:auto;font-weight:800;margin-top:5px">
+            book Table Of Content link : 
+            </div>
+            <div style="width:100%;height:auto">
+            ${body_toc_book_name}
+            </div>
+            <div style="width:100%;height:auto;font-weight:800;margin-top:5px">
+            Author : 
+            </div>
+            <div style="width:100%;height:auto;">
+            ${cleaned_site_domain_url}
+            </div>
+            <div style="width:100%;height:auto;font-weight:800;margin-top:5px">
+            Packed by :
+            </div>
+            <div style="width:100%;height:auto;">
+            ${window.location.protocol + '://' + window.location.hostname}
+            </div>
+            </div>`
+        })
+
       var checked_book_divs = $('#chapters_selection_container input:checked');//get checked, checkboxex if any
 
       if(checked_book_divs.length < 1){//check if any checkboxes were checked
+            
           return alert_box_1(`Select some chapters to transform to epub.`, "","","alert");//give alert;//if not give err
       }
       checked_book_divs.each(function() {//get input check within the div then loop 
@@ -295,9 +338,20 @@ function epub_pack(){
 
     function request_chapter_webpage(){
 
-        $.get("/find_webpage?site=" + check_chapters_checkbox_array[chapter_number].chapter_link, async function(results, err){
+        //clean alert 2
+        div_inner_html("please_wait_2_wait_text", "Please wait ..." );//wait text
+        div_inner_html("please_wait_2_chapter_name", check_chapters_checkbox_array[chapter_number].chapter_link_text );//curretn chapter 
+        div_inner_html("please_wait_2_chapter_numbers", chapter_number+'/'+check_chapters_checkbox_array.length);//current chapter of total
+        document.getElementById("please_wait_2_chapter_progress").style.width = (chapter_number/check_chapters_checkbox_array.length)*100 +"%";//progress bar
+
+        div_hide_show("please_wait_2")//show busy
+
+        var turbo_mode = document.getElementById("page_load_turbo_mode").checked;//turbo mode
+
+        $.get("/http_get?site=" + check_chapters_checkbox_array[chapter_number].chapter_link+"&turbo_mode="+turbo_mode, async function(results, err){
 
             if(results == "html_error" || err !== "success"){
+                div_hide_show("please_wait_2", "hide");//hide busy
                 console.log("chapter content request erro : " + err)
                 return  alert_box_1(`Error requestion ${check_chapters_checkbox_array[chapter_number].chapter_link_text}, from server .`, "","","alert");//give alert;//if not give err
             }
@@ -307,107 +361,26 @@ function epub_pack(){
             document.getElementById("request_html_container").innerHTML = results.page_dom;
 
             //retrieve book chapter text
-            $.getScript({ //make request synchronus or blocking
+            $.getScript({ //make request synchronus or blocking 
+
                 url : director_module_link, 
+
                 success : function(response,status){//retrive director module
-                    retrived_chapter_link_text.push({
-                        data:chapter_contents_scraping(), title: check_chapters_checkbox_array[chapter_number].chapter_link_text
-                 })//call book chapter director module scraping function
-                // request_epub_create();//call to check
+                    
+                    retrived_chapter_link_text.push({//create chapter object en save to array
 
-               // console.log(retrived_chapter_link_text)
+                        data:chapter_contents_scraping(), title: check_chapters_checkbox_array[chapter_number].chapter_link_text,
 
-                // var dom_chapter_contents = document.querySelectorAll("div.text-left  p");
-                // var chapter_text = ""
-                // for(p_element of dom_chapter_contents){
-                //     console.log(p_element)
-                //  chapter_text = chapter_text + p_element.innerText;
-                // }
-             
+                    })//call book chapter director module scraping function
 
-                    // let text = '';
-                    // for (const child of children(document.querySelector('div.text-left'))) {
-                    // if (child.nodeType === 1) {
-                    //     const before = window.getComputedStyle(child, '::before').getPropertyValue('content');
-                    //     if (before && before !== 'none') {
-                    //     text += before.replace(/^['"]/, '').replace(/['"]$/, '');
-                    //     }
-                    // } else if (child.nodeType === 3) {
-                    //     text += child.textContent;
-                    // }
-                    // }
-                    // console.log(text);
-                    // function children(node) {
-                    //     const ret = [];
-                    //     for (let i = 0; i < node.childNodes.length; i++) {
-                    //     const child = node.childNodes[i];
-                    //     ret.push(child, ...children(child));
-                    //     }
-                    //     return ret;
-                    // }
-                
+                    request_epub_create();//call to check
 
-                    let text = [];
-                    // var a = 1
-                    var text_arrange = {
-                        before : "",
-                        middle : "",
-                        after : "",
-                    }
-
-                    for (const child of children(document.querySelector('div.text-left'))) {
-
-                        if (child.nodeType === 1) {
-
-                            const before = window.getComputedStyle(child, '::before').getPropertyValue('content');
-
-                                if (before && before !== 'none') {
-
-                                    // text.push(before.replace(/^['"]/, '').replace(/['"]$/, '') + "' B"+a +"'");
-                                    text_arrange.before = before.replace(/^['"]/, '').replace(/['"]$/, '');
-
-                                }
-                                const after = window.getComputedStyle(child, '::after').getPropertyValue('content');
-
-                                if (after && after !== 'none') {
-
-                                    //text.push(after.replace(/^['"]/, '').replace(/['"]$/, '')  + "' A"+a +"'");
-                                    text_arrange.after = after.replace(/^['"]/, '').replace(/['"]$/, '');
-                                }
-
-
-                        } 
-                        if (child.nodeType === 3) {
-
-                            // text.push(child.textContent  + "' N"+a +"'");
-                            text_arrange.middle = child.textContent;
-                            text.push( text_arrange.before + text_arrange.middle + text_arrange.after)
-
-
-                        }
-                        
-                        // x (child)
-                        //  a++
-                    }
-
-                    // function x (child){
-                    //     console.log('ddddddddd ',child.nodeType," :::::: ",child.outerText,"\r\n",child )
-
-                    // }
-                    console.log(text.toString());
-                    function children(node) {
-
-                        const ret = [];
-                        for (let i = 0; i < node.childNodes.length; i++) {
-                        const child = node.childNodes[i];
-                        ret.push(child, ...children(child));
-                        }
-                        // console.log(ret)
-                        return ret;
-                    }
                 },
+
                 async:false
-            });
+            }); //HANDLE ERROR                 // div_hide_show("please_wait_1", "hide");//hide busy
+            // //show errer
+            // alert_box_1(alert_text = "No chapters could be found using selected 'Director Module on this wensite.'",create_epub(), "", "alert" )
     
         
 
@@ -416,11 +389,12 @@ function epub_pack(){
 
             if(chapter_number != check_chapters_checkbox_array.length ){//check if their are chapters to process
                 //if so call function
-                request_chapter_webpage();//
+                request_chapter_webpage();//call
             }
+
            function request_epub_create(){
-                if(chapter_number + 1 == check_chapters_checkbox_array.length  ){
-                    console.log(chapter_number + 1 , check_chapters_checkbox_array.length)
+                if(chapter_number + 1 == check_chapters_checkbox_array.length  ){ //if array end
+                    // console.log(chapter_number + 1 , check_chapters_checkbox_array.length)
                     create_epub()
                 }
            }     
@@ -431,25 +405,42 @@ function epub_pack(){
 
     //request epub of book from server
     function create_epub(){
-
+       
+        //update progress
+        div_inner_html("please_wait_2_wait_text", "Now, using Vodoo to Create Epub file" );//wait text
+       
         //get book details
         var book_name = document.getElementById("book_name").value;//get book name
         var book_author = document.getElementById("book_author").value;//get book author
         var book_language = document.getElementById("book_language").value;//get book language
         var book_save_name = document.getElementById("book_save_name").value;//get book save name
         var book_cover_image_link = document.getElementById("book_cover_image_link").value;//get book cover image url
+ 
 
-        console.log(retrived_chapter_link_text.toString())
-        $.post("/cook_epub" ,{book_name:book_name,book_author:book_author,book_language:book_language,book_save_name:book_save_name,book_cover_image_link:book_cover_image_link,book_chapters:retrived_chapter_link_text}, function(results, err){
+        // console.log(retrived_chapter_link_text.toString())
+        $.post("/cook_epub" ,{book_toc_link:body_toc_book_name,book_name:book_name,book_author:book_author,book_language:book_language,book_save_name:book_save_name,book_cover_image_link:book_cover_image_link,book_chapters:retrived_chapter_link_text}, function(results, err){
     
-            if(results == "html_error" || err !== "success"){
-    
+            if(results == "epub_err" || err !== "success"){
+                console.log(results,err);
+                div_hide_show("please_wait_2", "hide");//hide busy
+                //show errer
+                // alert_box_1(alert_text = "Problem producing epub, Retry?<br>#Tip try to reduce chapters if error persists.", yes_button = create_epub(), no_button = "", alert_type = "alert" )
+                alert_box_1(alert_text = "Problem producing epub, Retry?<br>#Tip try to reduce chapters if error persists.", create_epub(), "",  "alert" )
+                
             }
             //give download link
-            console.log(results,err);
+            div_hide_show("please_wait_2", "hide");//hide busy
+            //show download link
+           // epub_download(results);//start auto download//popup block issue
+            //give alert
+            alert_box_1(alert_text = "File Ready, re-download?<br>No download, enable popup for this", epub_download(results), "", "confirm" )
+            
         });
     }
 
+}
+function epub_download(url){//download produced epub
+    window.open(url, "_blank")
 }
 
 

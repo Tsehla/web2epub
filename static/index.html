@@ -1,7 +1,7 @@
 <html>
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="css/froala_blocks.min.css" rel="stylesheet" type="text/css" />
+        <link href="/css/froala_blocks.min.css" rel="stylesheet" type="text/css" />
         <link href="/css/index.css" rel="stylesheet" type="text/css">
 
         <style>
@@ -34,6 +34,32 @@
                     </div>
                 </div>
         </div>
+        <!-- progress update wait alert -->
+        <div id="please_wait_2" style="width: 100%;height:100%;position: absolute;top:0;left:0;background-color: rgba(133, 133, 133, 0.518);display: none;z-index: 2;">
+            <div style="width: 81%;height: 35vh;/*background-color: #838383 */;background-color:white;margin: 30vh auto;box-shadow: 2px 3px 18px;max-width: 500px;border-bottom-left-radius: 30%;">
+                <div style="width: 100%;height:64%;text-align: center;">
+                    <img src="imgs/worker.webp" style="height:100%;">
+                </div>
+                <div id="please_wait_2_wait_text" style="width: 100%;text-align: center;font-size: 18px;font-weight: 700;text-overflow: ellipsis;">
+                    Please wait ...
+                </div>
+                <div  style="width: 100%;text-align: center;font-size: 13px;font-weight: 700;height: 20px;overflow: hidden;color: #D40000;">
+                    <div style="width:80%;margin-left:auto;margin-right:auto">
+                        <div id="please_wait_2_chapter_name" style="width: 50%;height:100%;text-align: center;text-overflow: ellipsis;display: inline-block;">
+                            chapter 1
+                        </div>
+                        <div id="please_wait_2_chapter_numbers" style="width: 40%;height:100%;text-align: center;text-overflow: ellipsis;border-left:2px solid black;display: inline-block;">
+                            1/200
+                        </div>
+                    </div>
+                </div>
+                <div style="width: 102%;text-align: center;font-size: 18px;font-weight: 700;height:20px">
+                    <div style="width: 80%;border: 1px solid black;margin: 10px auto;box-shadow: 1px 1px 2px black;">
+                        <div id="please_wait_2_chapter_progress" style="width:98%;height:99%;background-color: black;margin: 1%;"></div>
+                    </div>
+                </div>
+            </div>
+    </div>
         <!-- confirm box -->
         <div id="alert_box_1" style="width: 100vw;height:100vh;position: absolute;z-index: 2;top:0;left:0;background-color: #000000a3;display: none;">
             <div style="width: 306px;height: 174px;background-color: white;margin: 37vh auto;border-bottom-right-radius: 50%;border-top-right-radius: 30px;text-align: center;color: black;opacity: 100%;box-shadow: 1px 4px 14px 0px white;">
@@ -244,6 +270,22 @@
                                 </select>
                             </div>
                         </div>
+
+                        <div style="width: 100%;height: 20px;text-align: center;color: white;font-size: 16px;margin-top: 13px;">
+                            Turbo mode <img src="imgs/info.png" style="width: 24px;margin-left: 0px;" onclick='alert_box_1(alert_text = "Speeds up processing by disabling images/video/ads/etc on Requested webpages containing book contents, dis-able when experincing issues", "", "", "alert" )'>
+                        </div>
+
+                         
+                        <div style="width: 100%;height: auto;margin-top: 18px;margin-bottom: 35px;font-size: 18px;text-align: center;color:white">
+                           
+                            <label class="switch">
+                                <input type="checkbox" checked id="page_load_turbo_mode">
+                                <span class="slider"></span>
+                            </label>
+                         
+                        </div>
+
+
                         <div id="chapters_selection_container" style="width:100%;height:auto">
                             <div style="width: 80%;height: 50px;margin:5px auto;">
                                 <input id="chapter_x_inout" type="checkbox" style="width: 20px; height: 100%;margin: 0px 10px;">
@@ -297,7 +339,7 @@
             </div>
         </div>
         <!-- quick navigation -->
-        <div id="quick_navi_container" style="width: 100vw;height: 10vh;position: fixed;bottom: 0px;left: 0px;display: none;">
+        <div id="quick_navi_container" style="width: 100vw;height: 10vh;position: fixed;bottom: 0px;left: 0px;display: none;z-index: 5;">
             <div style="width:80vw;height: 2px;background-color: black;margin-left: auto;margin-right: auto;margin-top: 3px;max-width:700px;"></div>
             <div style="width:100%;min-width: 250px;height:100%;min-height: 85px;text-align: center;max-width: 550px;margin-left: auto;margin-right: auto;">
                 <img src="imgs/Website icon.png" style="height: 35px;margin-right: 12%;" onclick="div_hide_show('menu_window_scroller')">
@@ -306,8 +348,6 @@
                 <img src="imgs/Tv icon.png" style="height: 41px;">
             </div>
         </div>
-
-
         <script type="text/javascript" src="jquery-3.3.1.min.js"></script>
         <script type="text/javascript" src="index.js"></script>
     </body>

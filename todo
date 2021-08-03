@@ -12,3 +12,17 @@ option to disable javascript
  ----------
  figure how to allow login session for pages that are paid
  ----------
+alert_box_1(alert_text = "File Ready, re-download?<br>No download, enable popup for this site", epub_download(results), "", "confirm" )
+    file downloads un asked
+-----------
+improve pupeteer launching speed
+        
+
+
+        ++++++++++++++++++++++++++++ features
+add pdf
+-------------
+add text to voice
+--------------
+add chapter files download continue, incase of err
+------------

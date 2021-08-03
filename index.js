@@ -139,117 +139,119 @@ var file_system = require("fs");
 
 //puppeteer launch on server start
 
-const puppeteer = require('puppeteer');
-var  browser = null;//browser intance refer variable
+// const puppeteer = require('puppeteer');
+var puppeteer = require('puppeteer-extra');//this supports plugins
 
-(async function main() {
-    try {
-        // var browser = await puppeteer.launch({ headless: true });
-        // to work on heroku options below required and more
-       browser = await puppeteer.launch({
-            headless: true,
-            // defaultViewport: null,
-            args: [
-                "--incognito",
-                "--no-sandbox",
-                "--single-process",
-                "--no-zygote"
-            ],
-        });
-        //  var [page] = await browser.pages();
-        // // var page = await browser.newPage();
+// var  browser = null;//browser intance refer variable
 
-        // await page.goto(req.query.site, {waitUntil: 'networkidle0'});
+// (async function main() {
+//     try {
+//         // var browser = await puppeteer.launch({ headless: true });
+//         // to work on heroku options below required and more
+//        browser = await puppeteer.launch({
+//             headless: true,
+//             // defaultViewport: null,
+//             args: [
+//                 "--incognito",
+//                 "--no-sandbox",
+//                 "--single-process",
+//                 "--no-zygote"
+//             ],
+//         });
+//         //  var [page] = await browser.pages();
+//         // // var page = await browser.newPage();
 
-        // var  page_body = await page.$eval('body', el => el.outerHTML);
+//         // await page.goto(req.query.site, {waitUntil: 'networkidle0'});
 
-        // res.send({director_module_to_use :cleaned_site_domain_url,page_dom:page_body});
+//         // var  page_body = await page.$eval('body', el => el.outerHTML);
 
-        // // var  page_body =  await director_module_to_use.toc_extracts_director(page);
+//         // res.send({director_module_to_use :cleaned_site_domain_url,page_dom:page_body});
 
-        // // console.log("---------",page_body);
+//         // // var  page_body =  await director_module_to_use.toc_extracts_director(page);
 
-        // await browser.close();
+//         // // console.log("---------",page_body);
 
-    } catch (err) {
-        console.error(err);
-        res.send("html_error");
-        next(err)
-    }
+//         // await browser.close();
 
-})();//auto run
+//     } catch (err) {
+//         console.error(err);
+//         res.send("html_error");
+//         next(err)
+//     }
+
+// })();//auto run
 
 //puppeter page propres
 var minify = require('html-minifier').minify;//html comressor
-async function page_process(res,req,cleaned_site_domain_url){
+// async function page_process(res,req,cleaned_site_domain_url){
 
-    try {
+//     try {
 
-         var [page] = await browser.pages();
-        // var page = await browser.newPage();
+//          var [page] = await browser.pages();
+//         // var page = await browser.newPage();
 
         
-        await page.setViewport({ width:1920, height:1080})//set browser page scren size
-        await page.setRequestInterception(true);//intercept page external/internal url
+//         await page.setViewport({ width:1920, height:1080})//set browser page scren size
+//         await page.setRequestInterception(true);//intercept page external/internal url
        
 
-        await page.on('request', function(req){
-            if(req.resourceType() == 'stylesheet' || req.resourceType() == 'font' || req.resourceType() == 'image' || req.resourceType() == "imageset" || req.resourceType() == "media" ){ //ad more resource types//if page requested contents matches
-                req.abort().catch((err)=>err);//cancell request
-            }
-            else {
-                req.continue().catch((err)=>err);//cancell request; //else continue loading
-            }
-        });
+//         await page.on('request', function(req){
+//             if(req.resourceType() == 'stylesheet' || req.resourceType() == 'font' || req.resourceType() == 'image' || req.resourceType() == "imageset" || req.resourceType() == "media" ){ //ad more resource types//if page requested contents matches
+//                 req.abort().catch((err)=>err);//cancell request
+//             }
+//             else {
+//                 req.continue().catch((err)=>err);//cancell request; //else continue loading
+//             }
+//         });
 
-        // console.log(req.query.site)
-        await page.goto(req.query.site, {waitUntil: 'networkidle0'});
+//         // console.log(req.query.site)
+//         await page.goto(req.query.site, {waitUntil: 'networkidle0',timeout: 0});
 
-        // var  page_body = await page.$eval('body', el => el.outerHTML);
-        var  page_body = await page.$eval('body', el => el.innerHTML);
-        // console.log((await browser.pages()).length)//total open pages/tabs
+//         // var  page_body = await page.$eval('body', el => el.outerHTML);
+//         var  page_body = await page.$eval('body', el => el.innerHTML);
+//         // console.log((await browser.pages()).length)//total open pages/tabs
         
        
-        // res.send({director_module_to_use :cleaned_site_domain_url,//compression seem to be 1kb effective
-        //     page_dom:  minify(page_body, {
-        //         collapseBooleanAttributes: true,
-        //         collapseInlineTagWhitespace: true,
-        //         collapseWhitespace: true,
-        //         conservativeCollapse: true,
-        //         // decodeEntities: true,
-        //         // includeAutoGeneratedTags: false,
-        //         minifyCSS: true,
-        //         // minifyJS: true,
-        //         minifyURLs: true,
-        //         preventAttributesEscaping: true,
-        //         processConditionalComments: true,
-        //         removeAttributeQuotes: true,
-        //         removeComments: true,
-        //         removeEmptyAttributes: true,
-        //         removeOptionalTags: true,
-        //         removeRedundantAttributes: true,
-        //         removeScriptTypeAttributes: true,
-        //         removeStyleLinkTypeAttributes: true,
-        //         sortAttributes: true,
-        //         sortClassName: true,
-        //         trimCustomFragments: true,
-        //         useShortDoctype: true
-        //     })
-        // });
-        res.send({director_module_to_use :cleaned_site_domain_url,page_dom : page_body })
+//         res.send({director_module_to_use :cleaned_site_domain_url,//compression seem to be 1kb effective
+//             page_dom:  minify(page_body, {
+//                 collapseBooleanAttributes: true,
+//                 collapseInlineTagWhitespace: true,
+//                 collapseWhitespace: true,
+//                 conservativeCollapse: true,
+//                 // decodeEntities: true,
+//                 // includeAutoGeneratedTags: false,
+//                 minifyCSS: true,
+//                 // minifyJS: true,
+//                 minifyURLs: true,
+//                 preventAttributesEscaping: true,
+//                 processConditionalComments: true,
+//                 removeAttributeQuotes: true,
+//                 removeComments: true,
+//                 removeEmptyAttributes: true,
+//                 removeOptionalTags: true,
+//                 removeRedundantAttributes: true,
+//                 removeScriptTypeAttributes: true,
+//                 removeStyleLinkTypeAttributes: true,
+//                 sortAttributes: true,
+//                 sortClassName: true,
+//                 trimCustomFragments: true,
+//                 useShortDoctype: true
+//             })
+//         });
+//        // res.send({director_module_to_use :cleaned_site_domain_url,page_dom : page_body })
         
 
 
-        // return page.close();//close browser page //issue causes browser to exit
-        // await browser.close();// close chrome browser
+//         // return page.close();//close browser page //issue causes browser to exit
+//         // await browser.close();// close chrome browser
        
-    } catch (err) {
-        console.error(err);
-        res.send("html_error");
+//     } catch (err) {
+//         console.error(err);
+//         res.send("html_error");
        
-    }
+//     }
 
-}
+// }
 app.get("/test", function(req,res){
 
 const axios = require("axios");
@@ -265,7 +267,7 @@ const fetchTitles = async () => {
 
 		const titles = [];
 
-		$('p').each((_idx, el) => {
+		$('div.text-left > p').each((_idx, el) => {
 			const title = $(el).text()
 			titles.push(title)
 		});
@@ -279,6 +281,9 @@ const fetchTitles = async () => {
 fetchTitles().then((titles) => console.log(titles));
 })
 
+
+//puppeteer adblock
+const AdblockerPlugin = require('puppeteer-extra-plugin-adblocker');
 
 app.get('/http_get', function(req,res){
 
@@ -325,18 +330,18 @@ app.get('/http_get', function(req,res){
           
             //  //file exists
             //  //console.log("director module found");
-            //  main();//call webpage retrieve
+             main();//call webpage retrieve
 
-            //check if browser is open
+            //check if browser is open ++++++=================
 
-            if(browser){//if browser  is open
-                page_process(res,req,cleaned_site_domain_url );//process page requested//passing get request and response object
-            }
+            // if(browser){//if browser  is open
+            //     page_process(res,req,cleaned_site_domain_url );//process page requested//passing get request and response object
+            // }
 
-            if(!browser){//if browser  is not opened
-                main()//attempt browser opening
-                require_director();//then rerun this function
-            }
+            // if(!browser){//if browser  is not opened
+            //     main()//attempt browser opening
+            //     require_director();//then rerun this function
+            // }
             
         });
 
@@ -398,6 +403,106 @@ app.get('/http_get', function(req,res){
     // };
 
 
+    async function main() {
+
+
+
+        try {
+
+            //adbloc
+            if(req.query.turbo_mode && req.query.turbo_mode == 'true'){ //if turbo mode is turn on
+                puppeteer.use(AdblockerPlugin({blockTrackers: true,}));//disable atracker together with ads
+            }
+    
+
+            // var browser = await puppeteer.launch({ headless: true });
+            // to work on heroku options below required and more
+                    
+            var browser = await puppeteer.launch({
+                        headless: true,
+                        // defaultViewport: null,
+                        args: [
+                            "--incognito",
+                            "--no-sandbox",
+                            "--single-process",
+                            "--no-zygote"
+                        ],
+                    });
+
+                var [page] = await browser.pages();
+                // var page = await browser.newPage();
+
+                
+                await page.setViewport({ width:1920, height:1080})//set browser page scren size
+
+                if(req.query.turbo_mode && req.query.turbo_mode == 'true'){ //if turbo mode is turn on
+
+                    // console.log('turbo mode : ',req.query.turbo_mode == 'true', typeof req.query.turbo_mode );
+
+                    await page.setRequestInterception(true);//intercept page external/internal url
+                
+                    await page.on('request', function(req){
+                        if(req.resourceType() == 'stylesheet' || req.resourceType() == 'font' || req.resourceType() == 'image' || req.resourceType() == "imageset" || req.resourceType() == "media" ){ //ad more resource types//if page requested contents matches
+
+                            req.abort().catch((err)=>err);//cancell request             
+                        }
+                        else {
+                            req.continue().catch((err)=>err);//cancell request; //else continue loading
+                        }
+                    });
+                }
+
+                // console.log(req.query.site)
+                await page.goto(req.query.site, {waitUntil: 'networkidle0',timeout: 0});
+
+                // var  page_body = await page.$eval('body', el => el.outerHTML);
+                var  page_body = await page.$eval('body', el => el.innerHTML);
+                // console.log((await browser.pages()).length)//total open pages/tabs
+                
+            
+                res.send({director_module_to_use :cleaned_site_domain_url,//compression seem to be 1kb effective
+                    page_dom:  minify(page_body, {
+                        collapseBooleanAttributes: true,
+                        collapseInlineTagWhitespace: true,
+                        collapseWhitespace: true,
+                        conservativeCollapse: true,
+                        // decodeEntities: true,
+                        // includeAutoGeneratedTags: false,
+                        minifyCSS: true,
+                        // minifyJS: true,
+                        minifyURLs: true,
+                        preventAttributesEscaping: true,
+                        processConditionalComments: true,
+                        removeAttributeQuotes: true,
+                        removeComments: true,
+                        removeEmptyAttributes: true,
+                        removeOptionalTags: true,
+                        removeRedundantAttributes: true,
+                        removeScriptTypeAttributes: true,
+                        removeStyleLinkTypeAttributes: true,
+                        sortAttributes: true,
+                        sortClassName: true,
+                        trimCustomFragments: true,
+                        useShortDoctype: true
+                    })
+                });
+
+                await browser.close();
+
+        } catch (err) {
+            console.error(err);
+            res.send("html_error");
+            next(err)
+        }
+    }
+
+
+
+
+
+
+
+
 }) //page content retrive allow timer option inbetween==================================================================================================================================
  
 app.get('/find_webpage', function(req,res){
@@ -416,29 +521,37 @@ app.get('/find_webpage', function(req,res){
 
 
 const epub = require('epub-gen');//epub generator module
-app.use(express.json()); //Used to parse JSON bodies
-app.use(express.urlencoded()); //Parse URL-encoded bodies
+
+app.use(express.json({limit: '50mb'})); //Used to parse JSON bodies
+app.use(express.urlencoded({limit: '50mb'})); //Parse URL-encoded bodies
+
 // profile short link check
 app.post("/cook_epub", function(req, res){
 
     // console.log(req.body);
+    let book_contents = req.body.book_chapters
 
+ 
+    var date = new Date()
     var options = {
         title: req.body.book_name,
         author: req.body.book_author,
-        output: './static/epubs/'+req.body.book_save_name+'.epub',
-        content: req.body.book_chapters,
+        output: './static/epubs/'+req.body.book_save_name+'  '+req.body.book_chapters[1].title+' - '+req.body.book_chapters[req.body.book_chapters.length - 1].title+'  D='+ date.getDate()+'-'+date.getMonth()+'-'+date.getFullYear()+' T='+date.getHours()+'-'+date.getMinutes()+'-'+date.getSeconds()+' .epub',
+        content: book_contents,
     };
 
-    //add cover page
-    options.content.unshift[{
-        title: req.body.book_name,
-        data: `<p style="width:100%;height:100%">
-            <img src="${req.body.book_cover_image_link}" style="width:100%;margin-top:20%;margin-left:auto;margin-right:auto">
-        </p>`
-    }]
 
-    new epub(options).promise.then(() => console.log('Done'));
+    new epub(options).promise
+    .then(function(){
+       res.jsonp('/epubs/'+req.body.book_save_name+'  '+req.body.book_chapters[1].title+' - '+req.body.book_chapters[req.body.book_chapters.length - 1].title+'  D='+ date.getDate()+'-'+date.getMonth()+'-'+date.getFullYear()+' T='+date.getHours()+'-'+date.getMinutes()+'-'+date.getSeconds()+' .epub');
+       console.log("done")
+
+    })
+    //.catch(function(err){
+    //     res.jsonp('epub_err'); 
+    //     console.log("epub create error : book name="+req.body.book_name+" ,web site : "+ err)}
+    // );
+
 })
 
 
