@@ -17,6 +17,16 @@
     "puppeteer-extra-plugin-adblocker": "^2.11.11",
     "request": "^2.88.2"
   },
+  
+  "buildpacks": [
+    {
+      "url": "https://github.com/heroku/heroku-buildpack-pgbouncer"
+    },
+    {
+      "url": "heroku/ruby"
+    }
+  ],
+
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
