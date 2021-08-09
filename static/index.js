@@ -367,13 +367,15 @@ function epub_pack(){
 
                 success : function(response,status){//retrive director module
                     
-                    retrived_chapter_link_text.push({//create chapter object en save to array
+                    // retrived_chapter_link_text.push({//create chapter object en save to array
 
-                        data:chapter_contents_scraping(), title: check_chapters_checkbox_array[chapter_number].chapter_link_text,
+                    //     data:chapter_contents_scraping(), title: check_chapters_checkbox_array[chapter_number].chapter_link_text,
 
-                    })//call book chapter director module scraping function
+                    // })//call book chapter director module scraping function
 
-                    request_epub_create();//call to check
+                    // request_epub_create();//call to check
+
+                    console.log(chapter_contents_scraping())
 
                 },
 

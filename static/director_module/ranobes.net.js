@@ -1,35 +1,41 @@
-
+var b = document.location.protocol+"//"+document.location.hostname+":"+document.location.port;//this website url
 
 //select html element containing chapters
 function toc_contents_scraping(){
 
-    //table of contents (toc) director module contents
- 
-    // document.getElementById("request_html_container").querySelectorAll("li.wp-manga-chapter.free-chap a").forEach(function (data) {
-    //         //loop through result and save link with its text or title
-    //         chapter_links_container.book_chapters.unshift({
-    //             chapter_link: data.href.trim(),
-    //             chapter_link_text: data.textContent.trim(),
-    //         })
-    //         //get book cover image link
-    //         chapter_links_container.book_cover_image_link = document.getElementById("request_html_container").querySelectorAll("div.tab-before-content img")[0].src //query selectorAll returns an array
-
-    //         //get book Name and link
-    //         chapter_links_container.book_website_link = document.getElementById("request_html_container").querySelectorAll("ol.breadcrumb li a")[1].href //book link on website
-    //         chapter_links_container.book_name = document.getElementById("request_html_container").querySelectorAll("ol.breadcrumb li")[1].textContent.trim() //book name, taken from book link url name
-
-    //         //get book author
-    //         chapter_links_container.book_author = "<unknown>"
-    //         //get book language 
-    //         chapter_links_container.book_language = "" //change html from server, //insteat of tranferring body dom make it transfer outer <html> or have one transfer outer html and extract language while the outer continue as normal
-    //})
     
+    //var book main page
+    var book_main_age = document.getElementById("request_html_container").querySelectorAll(".poster a");
+    // var book_image_url ="";
+    var retrived_toc_pages = 0;
 
 
+
+    if(book_main_age && book_main_age[0] && book_main_age[0].href){ //https://ranobes.net/novels/693420-supremacy-games-v216510.html
+
+        chapter_links_container.book_cover_image_link  = book_main_age[0].href;//save book image url
+
+       rectrive_book_toc_pages(
+        document.getElementById("request_html_container").querySelectorAll(".r-fullstory-chapters-foot a")[1].href.replace(b, 'https://ranobes.net')
+       );//redirect and request toc contents webpage 
+
+       // console.log( b,document.getElementById("request_html_container").querySelectorAll(".r-fullstory-chapters-foot a")[1].href.replace(b, 'https://ranobes.net'))
+       return;
+    }
+
+    var toc_container_pages = document.getElementById("request_html_container").querySelectorAll(".pages a");//table of contants container pages
+
+    if(!book_main_age || !book_main_age[0] || !book_main_age[0].href){//give some frinedly advice//https://ranobes.net/novels/693420-supremacy-games-v216510.html
+
+        toc_container_pages = document.getElementById("request_html_container").querySelectorAll(".pages a");
+
+        alert_box_1(`Provide link with ".html" at end to extrach book Image i.e [ https://ranobes.net/novels/693420-supremacy-games-v216510.html ], instead [https://ranobes.net/up/earths-greatest-magus/] for the book.`, "","", "alert");//give alert
+        book_chapter_links();//start processing
+
+    }
 
     //get table of contents container pages
-
-    function book_chapter_links(){
+    function book_chapter_links(){//get book chapter links and headings ++++++++++++++
         
       var links_dom_array = document.getElementById("request_html_container").querySelectorAll(".cat_block a");
 
@@ -39,7 +45,7 @@ function toc_contents_scraping(){
            if(index > 0){ //to skip "table of contents" link retrived
 
                 chapter_links_container.book_chapters.unshift({
-                    chapter_link: data.href.trim().replace(document.location.protocol+document.location.hostname+document.location.port, 'https://ranobes.net'),//replace link referal to local server to remote server hosting the book
+                    chapter_link: data.href.trim().replace(b, 'https://ranobes.net'),//replace link referal to local server to remote server hosting the book
                     chapter_link_text: data.textContent.trim().split("\n")[0],//clean chapter names before saving
                 })
 
@@ -53,9 +59,7 @@ function toc_contents_scraping(){
                 //get book author
                 chapter_links_container.book_author = "<unknown>"
                 //get book language 
-                chapter_links_container.book_language = "" //change html from server, //insteat of tranferring body dom make it transfer outer <html> or have one transfer outer html and extract language while the outer continue as normal
-           
-                
+                chapter_links_container.book_language = "" //change html from server, //insteat of tranferring body dom make it transfer outer <html> or have one transfer outer html and extract language while the outer continue as normal  
            }
 
         });
@@ -64,7 +68,7 @@ function toc_contents_scraping(){
 
 
     //send website to server to request webpage
-    async function rectrive_book_toc_pages(book_url){
+    async function rectrive_book_toc_pages(book_url){//get books toc links form toc container pages ++++++++++++++++
         // console.log(book_url)
         alert_1("show")//show wait alert
         //clean book link/url
@@ -91,22 +95,29 @@ function toc_contents_scraping(){
             // dom_chapter_retriever(results)
             // alert_1("hide")//hide wait alert
 
+            //save book iage link
+            // chapter_links_container.book_website_link = book_image_url;
+
             book_chapter_links();//call links extrator
         })
         
     }
 
- 
-    var toc_container_pages = document.getElementById("request_html_container").querySelectorAll(".pages a");
-    var retrived_toc_pages = 0;
-    //  console.log(toc_container_pages, toc_container_pages[0].href);
 
-    function do_toc_find(){
+  
+    // var retrived_toc_pages = 0; dont know why this nonsense needs to be on top, cause here i get undefined
+
+    function do_toc_find(){//loop through toc container pages ++++++++++++++++++
+
+        //    console.log(toc_container_pages, toc_container_pages[0].href);
 
         // if(retrived_toc_pages != toc_container_pages.length){
         if(retrived_toc_pages != 1){
+
+            // console.log(retrived_toc_pages, toc_container_pages[0].href);
+
             //ask server for page dom
-            rectrive_book_toc_pages(toc_container_pages[retrived_toc_pages].href);
+            rectrive_book_toc_pages(toc_container_pages[retrived_toc_pages].href);//call to extract book chapters link
             retrived_toc_pages = retrived_toc_pages + 1;//increment pages tracker
             return;
         }
@@ -116,71 +127,19 @@ function toc_contents_scraping(){
     }
 
     // do_toc_find();//start
-    book_chapter_links()
+   // book_chapter_links()
 
    
 }
 
 
 
-//chapter contents scraping
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ chapter contents scraping
 function chapter_contents_scraping(){
 
-    let text = "";
-    var text_arrange = {
-        before : "",
-        middle : "",
-        after : "",
-    }
+    var book_text = document.getElementById("request_html_container").querySelectorAll("#arrticle p");//table of contants container pages\\
+    console.log(book_text[0].textContent)
 
-    for (const child of children(document.querySelector('div.text-left'))) {
-
-        if (child.nodeType === 1) { //if node type is not normal
-
-            const before = window.getComputedStyle(child, '::before').getPropertyValue('content');//get before node content value
-
-                if (before && before !== 'none') {//check if before
-
-                    text_arrange.before = before.replace(/^['"]/, '').replace(/['"]$/, '');//clean retrived value en save to before object
-
-                }
-                const after = window.getComputedStyle(child, '::after').getPropertyValue('content');
-
-                if (after && after !== 'none') {
-
-                    text_arrange.after = after.replace(/^['"]/, '').replace(/['"]$/, '');
-                    
-                }
-        } 
-        if (child.nodeType === 3) {//check if its normal div node
-
-            if(child.textContent.search("::after") == -1 || child.textContent.search("::before") == -1){//check if it does not contain [ ::before / ::after will be contained by css in the page that defines the before/after content value ] if not contained, 
-                text_arrange.middle = child.textContent;// add to node content text to middle object
-
-               // text.push( text_arrange.before + text_arrange.middle + text_arrange.after)//arrange the text in right order and add sentence to array
-                text = text + text_arrange.before + text_arrange.middle + text_arrange.after;
-            }
-        }
-    }
-
-
-    // console.log(text.toString());
-    
-    function children(node) {//extract div element child nodes 
-
-        const ret = [];
-
-        for (let i = 0; i < node.childNodes.length; i++) {
-
-            const child = node.childNodes[i];
-            ret.push(child, ...children(child));//save to array
-            
-        }
-        // console.log(ret)
-
-        return ret;
-    }
-
-   return text.toString();
+   return book_text[0].textContent;
 
 }
