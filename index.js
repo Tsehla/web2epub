@@ -547,7 +547,7 @@ app.use(express.urlencoded({limit: '50mb'})); //Parse URL-encoded bodies
 // profile short link check
 app.post("/cook_epub", function(req, res){
 
-    // console.log(req.body);
+    console.log(req.body);
     let book_contents = req.body.book_chapters
 
  
