@@ -31,4 +31,8 @@ can have turbo mode user controled for first table of content chapter links scra
 use https://www.webcomponents.org/polyfills/shadow-dom/
 shadow dom to sandbox the dom from server, best if its can be prevented from requesting external reources, so node console will be clean
 -------------
-
+add chapter collection resume function when there interference or failure
+----------------
+https://ranobes.net/
+prserve new line when converting to text
+------------------

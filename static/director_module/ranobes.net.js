@@ -74,7 +74,7 @@ function toc_contents_scraping(){
 
     //send website to server to request webpage
     async function rectrive_book_toc_pages(book_url){//get books toc links form toc container pages ++++++++++++++++
-        console.log(book_url)
+        // console.log(book_url)
         alert_1("show")//show wait alert
         //clean book link/url
         // book_url = book_url.replace("http://","").replace("https://","");
