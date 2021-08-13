@@ -469,7 +469,14 @@ app.get('/http_get', function(req,res){
                 // console.log(req.query.site)
                 // await page.goto(req.query.site, {waitUntil: 'networkidle0',timeout: 0});
                 // await page.goto(req.query.site, {waitUntil: 'networkidle2',timeout: 0});
-                await page.goto(req.query.site);
+                // await page.goto(req.query.site);
+                if(req.query.turbo_mode && req.query.turbo_mode == 'true'){ //if turbo mode is turn on
+                    await page.goto(req.query.site);//go to website load it and pass complete to another function, even if some script has no loaded yet, hopefully its not important script that write the dom
+                }
+                if(!req.query.turbo_mode || req.query.turbo_mode == 'false'){ //if turbo mode is turn off
+                    await page.goto(req.query.site, {waitUntil: 'networkidle2'});//disable when turbo off wait for page connections to be complete, i.e every request is made en complete or failed etc, either way you wait
+                }
+                
                 
                 // await page.waitForSelector('.wp-manga-template-default', { visible: true, timeout: 0 });
 
