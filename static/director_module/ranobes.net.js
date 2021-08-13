@@ -136,8 +136,10 @@ function toc_contents_scraping(){
 
 
         var get_toc_container_page_last_page_number = (toc_container_pages[toc_container_pages.length - 1]);//get last link element <a> of the retrived toc container pages
-        console.log(Number(get_toc_container_page_last_page_number.innerText),retrived_toc_pages != Number(get_toc_container_page_last_page_number.innerText));
+        // console.log(Number(get_toc_container_page_last_page_number.innerText),retrived_toc_pages != Number(get_toc_container_page_last_page_number.innerText));
+
         if(retrived_toc_pages != Number(get_toc_container_page_last_page_number.innerText)){ 
+        // if(retrived_toc_pages != 2){ 
 
             // var  toc_firt_page_link = "https://ranobes.net/up/earths-greatest-magus/page/7/".split("/");
             //link.splice(link.length - 2, 2);
@@ -153,7 +155,7 @@ function toc_contents_scraping(){
             }
           
     
-            console.log(":::: ",toc_firt_page_link_template + retrived_toc_pages)
+            // console.log(":::: ",toc_firt_page_link_template + retrived_toc_pages)
 
             //ask server for page dom
             rectrive_book_toc_pages(toc_firt_page_link_template + retrived_toc_pages );//call to extract book chapters link
@@ -167,7 +169,7 @@ function toc_contents_scraping(){
 
 
 
-        console.log(chapter_links_container.book_chapters);
+        // console.log(chapter_links_container.book_chapters);
         porpulate_book_details_on_menu();//re populate book selection menu ///OH I LOVE ADDONS DIDNT KNOW THEY COULD BE THIS USEFULL//LOL IT WAS SHITTY CREATING IT EN THE INTERFACE IT INTERACTS WITH CODE//then it was my first time
         alert_1("hide")//show wait alert
     }
@@ -185,7 +187,19 @@ function chapter_contents_scraping(){
 
     var book_text = document.getElementById("request_html_container").querySelectorAll("#arrticle p");//table of contants container pages\\
     // console.log(book_text[0].textContent)
+    // console.log("::::: ",book_text[0],book_text[0].textContent,book_text)
 
-   return book_text[0].textContent;
+//    return book_text[0].textContent;
+    var chapter_text = "";//contains chapter texts
+
+    //collect chapter texts
+    book_text.forEach(string =>{
+        chapter_text = chapter_text  + string.outerText;
+
+    })
+
+    // console.log(chapter_text)
+    
+    return chapter_text;
 
 }

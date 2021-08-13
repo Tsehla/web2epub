@@ -28,3 +28,7 @@ add chapter files download continue, incase of err
 ------------
 can have turbo mode user controled for first table of content chapter links scrapping
 --------------
+use https://www.webcomponents.org/polyfills/shadow-dom/
+shadow dom to sandbox the dom from server, best if its can be prevented from requesting external reources, so node console will be clean
+-------------
+
