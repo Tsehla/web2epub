@@ -439,11 +439,15 @@ app.get('/http_get', function(req,res){
                 // var page = await browser.newPage();
                 
 
-                const page = await browser.newPage();
-                // const page = await browser.pages()[0]
+                // const page = await browser.newPage();
+                const page = (await browser.pages())[0]
 
                 
-                await page.setViewport({ width:1920, height:1080})//set browser page scren size
+                // await page.setViewport({ width:1920, height:1080})//set browser page scren size
+                await page.setViewport({ width:768, height:928})//set browser page scren size//ipad size//potrait
+                
+                // await page.setUserAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36');
+                await page.setUserAgent('Mozilla/5.0 (iPad; CPU OS 14_7_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Mobile/15E148 Safari/604.1');
 
                 if(req.query.turbo_mode && req.query.turbo_mode == 'true'){ //if turbo mode is turn on
 
@@ -463,14 +467,21 @@ app.get('/http_get', function(req,res){
                 }
 
                 // console.log(req.query.site)
-                await page.goto(req.query.site, {waitUntil: 'networkidle0',timeout: 0});
+                // await page.goto(req.query.site, {waitUntil: 'networkidle0',timeout: 0});
+                // await page.goto(req.query.site, {waitUntil: 'networkidle2',timeout: 0});
+                await page.goto(req.query.site);
+                
                 // await page.waitForSelector('.wp-manga-template-default', { visible: true, timeout: 0 });
 
                 // var  page_body = await page.$eval('body', el => el.outerHTML);
                 var  page_body = await page.$eval('body', el => el.innerHTML);
                 // console.log((await browser.pages()).length)//total open pages/tabs
                 
-            
+                // await browser.close();
+                let pages = await browser.pages()
+                await Promise.all(pages.map(page =>page.close()))
+                await browser.close()
+
                 // res.send({director_module_to_use :cleaned_site_domain_url,//compression seem to be 1kb effective
                 //     page_dom:  minify(page_body, {
                 //         collapseBooleanAttributes: true,
@@ -498,10 +509,6 @@ app.get('/http_get', function(req,res){
                 //     })
                 // });
                 
-                // await browser.close();
-                let pages = await browser.pages()
-                await Promise.all(pages.map(page =>page.close()))
-                await browser.close()
 
                 res.send({
                     director_module_to_use :cleaned_site_domain_url,//compression seem to be 1kb effective
@@ -547,23 +554,38 @@ app.use(express.urlencoded({limit: '50mb'})); //Parse URL-encoded bodies
 // profile short link check
 app.post("/cook_epub", function(req, res){
 
-    console.log(req.body);
+    // console.log(" body req ::: ",req.body);
     let book_contents = req.body.book_chapters
 
- 
+    //formulate book name that unique
     var date = new Date()
+    // var book_name_new = req.body.book_save_name.replace(/[+',?*{}|":;'&%$#@!`~+_]/gi,"-") +' - '+req.body.book_chapters[1].title.toString().replace(/[+',?*{}|":;'&%$#@!`~+_]/gi,"-")+' - '+req.body.book_chapters[req.body.book_chapters.length - 1].title+'  Date -'+ date.getDate()+'.'+date.getMonth()+'.'+date.getFullYear()+' Time -'+date.getHours()+'.'+date.getMinutes()+'.'+date.getSeconds()+' .epub';//clean epub name of illegal file name //nice way of cleaning not working to remove "?" dont know why dont care, now calling big gunds, the functions hahhahahahaha hahahahahaha
+
+    function the_big_guns_string_cleaner_the_not_so_elegant_way(string = "hello world"){
+
+        var string_to_array = string.split("")
+        var cleaned_string = "";//contained processed string
+        string_to_array.forEach(function(character){
+             cleaned_string = cleaned_string + character.replace(/\[/gi, " ").replace(/\+/gi, " ").replace(/'/gi, " ").replace(/,/gi, " ").replace(/\?/gi, " ").replace(/\*/gi, " ").replace(/{/gi, " ").replace(/}/gi, " ").replace(/\|/gi, " ").replace(/:/gi, " ").replace(/"/gi, " ").replace(/&/gi, " ").replace(/;/gi, " ").replace(/%/gi, " ").replace(/\$/gi, " ").replace(/#/gi, " ").replace(/@/gi, " ").replace(/!/gi, " ").replace(/`/gi, " ").replace(/~/gi, " ").replace(/_/gi, " ").replace(/]/gi, " ").replace(/\//gi, " ").replace(/\\/gi, " ");
+            
+        });
+        return cleaned_string
+    }
+ 
+    var book_name_new = the_big_guns_string_cleaner_the_not_so_elegant_way(req.body.book_save_name) +' - '+the_big_guns_string_cleaner_the_not_so_elegant_way(req.body.book_chapters[1].title)+' - '+req.body.book_chapters[req.body.book_chapters.length - 1].title+'  Date -'+ date.getDate()+'.'+date.getMonth()+'.'+date.getFullYear()+' Time -'+date.getHours()+'.'+date.getMinutes()+'.'+date.getSeconds()+' .epub';//clean epub name of illegal file name 
+
     var options = {
         title: req.body.book_name,
         author: req.body.book_author,
-        output: './static/epubs/'+req.body.book_save_name+'  '+req.body.book_chapters[1].title+' - '+req.body.book_chapters[req.body.book_chapters.length - 1].title+'  D='+ date.getDate()+'-'+date.getMonth()+'-'+date.getFullYear()+' T='+date.getHours()+'-'+date.getMinutes()+'-'+date.getSeconds()+' .epub',
+        output: './static/epubs/'+book_name_new ,//clean epub name of illegal file name characters
         content: book_contents,
     };
 
 
     new epub(options).promise
     .then(function(){
-       res.jsonp('/epubs/'+req.body.book_save_name+'  '+req.body.book_chapters[1].title+' - '+req.body.book_chapters[req.body.book_chapters.length - 1].title+'  D='+ date.getDate()+'-'+date.getMonth()+'-'+date.getFullYear()+' T='+date.getHours()+'-'+date.getMinutes()+'-'+date.getSeconds()+' .epub');
-       console.log("done")
+       res.jsonp('/epubs/'+book_name_new );
+    //    console.log("done")
 
     })
     //.catch(function(err){

@@ -7,7 +7,11 @@ function toc_contents_scraping(){
     //var book main page
     var book_main_age = document.getElementById("request_html_container").querySelectorAll(".poster a");
     // var book_image_url ="";
-    var retrived_toc_pages = 0;
+    // var retrived_toc_pages = 0;
+    var retrived_toc_pages = 1;
+    //var  toc_firt_page_link = "https://ranobes.net/up/earths-greatest-magus/page/7/".split("/");
+    var toc_firt_page_link_template = "";
+
 
 
 
@@ -39,6 +43,7 @@ function toc_contents_scraping(){
         
       var links_dom_array = document.getElementById("request_html_container").querySelectorAll(".cat_block a");
 
+
       links_dom_array.forEach(function(data, index) {
 
             //loop through result and save link with its text or title
@@ -69,7 +74,7 @@ function toc_contents_scraping(){
 
     //send website to server to request webpage
     async function rectrive_book_toc_pages(book_url){//get books toc links form toc container pages ++++++++++++++++
-        // console.log(book_url)
+        console.log(book_url)
         alert_1("show")//show wait alert
         //clean book link/url
         // book_url = book_url.replace("http://","").replace("https://","");
@@ -106,21 +111,62 @@ function toc_contents_scraping(){
 
   
     // var retrived_toc_pages = 0; dont know why this nonsense needs to be on top, cause here i get undefined
+    // var  toc_firt_page_link = "https://ranobes.net/up/earths-greatest-magus/page/7/".split("/");
+    // var toc_firt_page_link_template = "";
 
     function do_toc_find(){//loop through toc container pages ++++++++++++++++++
 
         //    console.log(toc_container_pages, toc_container_pages[0].href);
+       //    console.log(toc_container_pages.length, retrived_toc_pages);
 
-        // if(retrived_toc_pages != toc_container_pages.length){
-        if(retrived_toc_pages != 1){
 
-            // console.log(retrived_toc_pages, toc_container_pages[0].href);
+        // if(retrived_toc_pages != toc_container_pages.length - 1){ //some of toc container pages are [ ... ] to keep the navi short, so ill discard
+        // // if(retrived_toc_pages != 1){//retrive two chapter container pages, //for during module development only
+
+
+
+        //     // console.log(retrived_toc_pages, toc_container_pages[0].href);
+
+        //     //ask server for page dom
+        //     rectrive_book_toc_pages(toc_container_pages[retrived_toc_pages].href);//call to extract book chapters link
+        //     retrived_toc_pages = retrived_toc_pages + 1;//increment pages tracker
+        //     return;
+        // }
+
+
+
+        var get_toc_container_page_last_page_number = (toc_container_pages[toc_container_pages.length - 1]);//get last link element <a> of the retrived toc container pages
+        console.log(Number(get_toc_container_page_last_page_number.innerText),retrived_toc_pages != Number(get_toc_container_page_last_page_number.innerText));
+        if(retrived_toc_pages != Number(get_toc_container_page_last_page_number.innerText)){ 
+
+            // var  toc_firt_page_link = "https://ranobes.net/up/earths-greatest-magus/page/7/".split("/");
+            //link.splice(link.length - 2, 2);
+            //var url =link.map(function(arr){return arr + "/"}).toString();
+
+          
+            if( retrived_toc_pages == 1){//first time function run
+                var toc_firt_page_link = toc_container_pages[retrived_toc_pages].href.split("/");//extract link url, en turn to array//en save as 
+                toc_firt_page_link.splice( toc_firt_page_link.length - 2, 2);//remove link last eleents
+                toc_firt_page_link.forEach(function(arr){ 
+                   toc_firt_page_link_template = toc_firt_page_link_template + arr + "/";
+                });//create link with last elements removed
+            }
+          
+    
+            console.log(":::: ",toc_firt_page_link_template + retrived_toc_pages)
 
             //ask server for page dom
-            rectrive_book_toc_pages(toc_container_pages[retrived_toc_pages].href);//call to extract book chapters link
+            rectrive_book_toc_pages(toc_firt_page_link_template + retrived_toc_pages );//call to extract book chapters link
             retrived_toc_pages = retrived_toc_pages + 1;//increment pages tracker
             return;
         }
+
+
+
+
+
+
+
         console.log(chapter_links_container.book_chapters);
         porpulate_book_details_on_menu();//re populate book selection menu ///OH I LOVE ADDONS DIDNT KNOW THEY COULD BE THIS USEFULL//LOL IT WAS SHITTY CREATING IT EN THE INTERFACE IT INTERACTS WITH CODE//then it was my first time
         alert_1("hide")//show wait alert
@@ -138,7 +184,7 @@ function toc_contents_scraping(){
 function chapter_contents_scraping(){
 
     var book_text = document.getElementById("request_html_container").querySelectorAll("#arrticle p");//table of contants container pages\\
-    console.log(book_text[0].textContent)
+    // console.log(book_text[0].textContent)
 
    return book_text[0].textContent;
 
