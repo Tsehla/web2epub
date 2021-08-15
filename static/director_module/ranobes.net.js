@@ -138,7 +138,7 @@ function toc_contents_scraping(){
         var get_toc_container_page_last_page_number = (toc_container_pages[toc_container_pages.length - 1]);//get last link element <a> of the retrived toc container pages
         // console.log(Number(get_toc_container_page_last_page_number.innerText),retrived_toc_pages != Number(get_toc_container_page_last_page_number.innerText));
 
-        if(retrived_toc_pages != Number(get_toc_container_page_last_page_number.innerText)){ 
+        if(retrived_toc_pages <= Number(get_toc_container_page_last_page_number.innerText)){ 
         // if(retrived_toc_pages != 2){ 
 
             // var  toc_firt_page_link = "https://ranobes.net/up/earths-greatest-magus/page/7/".split("/");
