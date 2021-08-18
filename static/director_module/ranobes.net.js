@@ -85,12 +85,14 @@ function toc_contents_scraping(){
                 //alert("Error retrieving book contents.")
                 alert_box_1(alert_text = "Error retrieving book contents.", "", "", "alert" );//give alert//simple alert
                 alert_1("hide")//hide wait alert
+                div_hide_show("please_wait_2", "hide")//hide progress alert busy
                 return console.log(results);
             }
             if(results == "module_error"){//module not aailable
                 //alert("Error retrieving book contents.")
                 alert_box_1(alert_text = "Error retrieving book contents. Table of content pages processing Error :  ", "", "", "alert" );//give alert//simple alert
                 alert_1("hide")//hide wait alert
+                div_hide_show("please_wait_2", "hide")//hide progress alert busy
                 //show bookd details viewer menu
                 div_hide_show("book_details_viewer_container");//show
                 return console.log(results);
@@ -141,6 +143,11 @@ function toc_contents_scraping(){
         if(retrived_toc_pages <= Number(get_toc_container_page_last_page_number.innerText)){ 
         // if(retrived_toc_pages != 2){ 
 
+            div_inner_html("please_wait_2_chapter_name", "TOC Container Link : "+retrived_toc_pages);//curretn chapter 
+            div_inner_html("please_wait_2_chapter_numbers", retrived_toc_pages+'/'+Number(get_toc_container_page_last_page_number.innerText));//current chapter of total
+            document.getElementById("please_wait_2_chapter_progress").style.width = (retrived_toc_pages/Number(get_toc_container_page_last_page_number.innerText))*100 +"%";//progress bar
+            
+
             // var  toc_firt_page_link = "https://ranobes.net/up/earths-greatest-magus/page/7/".split("/");
             //link.splice(link.length - 2, 2);
             //var url =link.map(function(arr){return arr + "/"}).toString();
@@ -152,6 +159,15 @@ function toc_contents_scraping(){
                 toc_firt_page_link.forEach(function(arr){ 
                    toc_firt_page_link_template = toc_firt_page_link_template + arr + "/";
                 });//create link with last elements removed
+
+
+                    
+                //progress alert
+                alert_1("hide")//hide wait alert
+
+                div_inner_html("please_wait_2_wait_text", "Getting TOC chapters container Pages" );//wait text
+                    
+                div_hide_show("please_wait_2")//show busy
             }
           
     
@@ -159,9 +175,14 @@ function toc_contents_scraping(){
 
             //ask server for page dom
             rectrive_book_toc_pages(toc_firt_page_link_template + retrived_toc_pages );//call to extract book chapters link
+            if(retrived_toc_pages == Number(get_toc_container_page_last_page_number.innerText)){ //hide progress alert
+                div_hide_show("please_wait_2", "hide")//hide progress alert busy
+            }
             retrived_toc_pages = retrived_toc_pages + 1;//increment pages tracker
             return;
         }
+
+
 
 
 
