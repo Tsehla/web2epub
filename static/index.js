@@ -1,3 +1,36 @@
+//==================== internal navigation
+var url_hostname = window.location.hostname;//server hot
+var url_query = window.location.search;//site webpage query
+var url_port = window.location.port;//site port
+if(url_port){//process port
+    url_port = ":"+ url_port;
+}
+var url_protocol = window.location.protocol;//site protocol
+if(url_protocol){//process
+    url_protocol = url_protocol + "://";
+}
+var url_pathname = window.location.pathname;//sith pathname
+//window.history.pushState("","",url_protocol+url_hostname+url_port+url_pathname+url_query);
+
+
+(function(){//when page loads auto run
+   // console.log("::: "+url_protocol+"//"+url_hostname+url_port+url_pathname+url_query )
+    
+   if(url_query == "?menu-start"){//if
+        div_hide_show("load_screen", "hide"); main_menu_upper_layer_show();div_hide_show('convert_to_epub_menu_container');div_hide_show('process_start_restart_option_button');//do
+    }
+
+
+
+
+
+})()
+
+//simulate old website page navigation
+function menu_1(){//start menu menu 1
+    window.history.pushState("","","?menu-start");//add link to history
+}
+
 
 //----------reusables functions
 function div_inner_html(html_div_id = "", html_div_value = ""){//inner html
@@ -41,6 +74,10 @@ function alert_box_1(alert_text = "!! Are you sure", yes_button = "", no_button 
         document.getElementById("alert_box_1_buttons").innerHTML = `<button style="width:150px;height: 25px;background-color: #D40000;border: 2px solid #830404;display: inline-block;border-radius: 30px;margin-left: -21px;color:white" onclick='div_hide_show("alert_box_1", "hide")${yep}'>Alright</button>`;//add buttons, with onclick already embedded
     }
     div_hide_show("alert_box_1");//show alert
+}
+//function page reload
+function page_reload(){
+    window.open(window.location.href, "_self")
 }
 
 //menu windows underlay layer
