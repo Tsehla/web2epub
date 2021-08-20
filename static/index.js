@@ -391,8 +391,8 @@ function epub_pack(){
     function request_chapter_webpage(its_continue){
 
         if(its_continue && chapter_number > 1){ //if continue button pressed
-            // chapter_number = chapter_number -1; //start on previus chapter for continue
-            // retrived_chapter_link_text.pop();//
+            chapter_number = chapter_number -1; //start on previus chapter for continue
+            retrived_chapter_link_text.pop();//
             text_notification ('Attempting to Continue');
         }
         
