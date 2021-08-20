@@ -33,6 +33,7 @@ function menu_1(){//start menu menu 1
 
 
 //----------reusables functions
+//dom editor
 function div_inner_html(html_div_id = "", html_div_value = ""){//inner html
     document.getElementById(html_div_id).innerHTML = html_div_value;
 }
@@ -74,6 +75,16 @@ function alert_box_1(alert_text = "!! Are you sure", yes_button = "", no_button 
         document.getElementById("alert_box_1_buttons").innerHTML = `<button style="width:150px;height: 25px;background-color: #D40000;border: 2px solid #830404;display: inline-block;border-radius: 30px;margin-left: -21px;color:white" onclick='div_hide_show("alert_box_1", "hide")${yep}'>Alright</button>`;//add buttons, with onclick already embedded
     }
     div_hide_show("alert_box_1");//show alert
+}
+//text notification
+function text_notification (notification_text = "Hello"){ //
+
+    //change notification text
+    div_hide_show("text_notification_container");
+    //show notification
+    div_inner_html("text_notification", notification_text);
+    //set notification hide timer
+   setTimeout( function (){div_hide_show("text_notification_container","hide")}, 3000);//hide notification
 }
 //function page reload
 function page_reload(){
