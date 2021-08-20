@@ -309,6 +309,8 @@ function chapters_select_unselect_all(action_type){
 }
 
 //++++++++++ book packing to epub
+var check_chapters_checkbox_array = [];//saved links to check chapters
+var retrived_chapter_link_text = [];//save retrived and processed chapter text
 function epub_pack(){
 
   
@@ -319,8 +321,8 @@ function epub_pack(){
     //// var selected_ending_chapters = div_get_inut_value("book_ending_chapter_selection");//get book end chapter
 
       //retrive checked chapters only
-      var check_chapters_checkbox_array = [];//saved links to check chapters
-      var retrived_chapter_link_text = [];//save retrived and processed chapter text
+    //   var check_chapters_checkbox_array = [];//saved links to check chapters
+    //   var retrived_chapter_link_text = [];//save retrived and processed chapter text
 
     //cover image
     //get wesite domain
@@ -380,11 +382,23 @@ function epub_pack(){
 
     //set download request timer. but kinda useless without a proxy ------------
 
+    request_chapter_webpage();//start chapter processing
 
+    }
     //request chapter webage from server
     var chapter_number = 0;//track processed chapters
 
-    function request_chapter_webpage(){
+    function request_chapter_webpage(its_continue){
+
+        if(its_continue && chapter_number > 1){ //if continue button pressed
+            // chapter_number = chapter_number -1; //start on previus chapter for continue
+            // retrived_chapter_link_text.pop();//
+            text_notification ('Attempting to Continue');
+        }
+        
+        if(its_continue && chapter_number < 1){ //if continue button pressed and no previus chapters where processed
+           return;//end request
+        }
 
         //clean alert 2
         div_inner_html("please_wait_2_wait_text", "Please wait ..." );//wait text
@@ -451,7 +465,7 @@ function epub_pack(){
            }     
         })
     }
-    request_chapter_webpage();//start chapter processing
+    // request_chapter_webpage();//start chapter processing
  
 
     //request epub of book from server
@@ -489,7 +503,7 @@ function epub_pack(){
         });
     }
 
-}
+// }
 function epub_download(url){//download produced epub
     window.open(url, "_blank")
 }
