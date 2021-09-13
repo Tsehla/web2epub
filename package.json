@@ -15,9 +15,9 @@
     "puppeteer": "^10.1.0",
     "puppeteer-extra": "^3.1.18",
     "puppeteer-extra-plugin-adblocker": "^2.11.11",
-    "request": "^2.88.2"
+    "request": "^2.88.2",
+    "xvfb": "^0.4.0"
   },
-  
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

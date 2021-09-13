@@ -40,3 +40,17 @@ find mo effective ways to remove unwanted chars in a name
 static/epubs/The Entire Mankind is Acting As Me... - Chapter 1  Human Observation Program  All of humanity is missing  - Chapter 3: Where Did Everyone Go?! 
 -------------------
 find ways to close browser opened and left opened when chromium browser get error
+
+
++++++++++++++
+
+display driver https://medium.com/@johann.pardanaud/running-electron-on-heroku-db3866a690a3 (xvfb) 
+
+npm i xvfb
+
+sudo apt-get install xvfb
+
+working on cloud run : https://stackoverflow.com/questions/51883055/running-puppeteer-with-xfvb-headless-false Solution by : (You seem to be trying to use the Xvfb node module. While the other answers definitely work, here's a snippet that works fully within nodejs)
+libm error : install : 
+        sudo apt-get update
+        sudo apt-get install -y libgbm-dev

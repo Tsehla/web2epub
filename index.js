@@ -252,33 +252,63 @@ var minify = require('html-minifier').minify;//html comressor
 //     }
 
 // }
+
+const Xvfb = require('xvfb');
 app.get("/test", function(req,res){
 
-const axios = require("axios");
-const cheerio = require("cheerio");
+// const axios = require("axios");
+// const cheerio = require("cheerio");
 
-const fetchTitles = async () => {
-	try {
-		const response = await axios.get('https://a-t.nu/novel/linker/chapter-1/');
+// const fetchTitles = async () => {
+// 	try {
+// 		const response = await axios.get('https://a-t.nu/novel/linker/chapter-1/');
 
-        const html = response.data;
+//         const html = response.data;
 
-		const $ = cheerio.load(html);
+// 		const $ = cheerio.load(html);
 
-		const titles = [];
+// 		const titles = [];
 
-		$('div.text-left > p').each((_idx, el) => {
-			const title = $(el).text()
-			titles.push(title)
-		});
+// 		$('div.text-left > p').each((_idx, el) => {
+// 			const title = $(el).text()
+// 			titles.push(title)
+// 		});
 
-		return titles;
-	} catch (error) {
-		throw error;
-	}
-};
+// 		return titles;
+// 	} catch (error) {
+// 		throw error;
+// 	}
+// };
 
-fetchTitles().then((titles) => console.log(titles));
+// fetchTitles().then((titles) => console.log(titles));
+
+
+//===========
+
+const puppeteer = require('puppeteer')
+const Xvfb = require('xvfb');
+
+    (async () => {
+        var xvfb = new Xvfb({
+            silent: true,
+            xvfb_args: ["-screen", "0", '1280x720x24', "-ac"],
+        });
+        xvfb.start((err)=>{if (err) console.error(err)})
+        const browser = await puppeteer.launch({
+            headless: false,
+            defaultViewport: null, //otherwise it defaults to 800x600
+            args: ['--no-sandbox', '--start-fullscreen', '--display='+xvfb._display]
+            });
+        const page = await browser.newPage();
+        //await page.goto(`https://wikipedia.org`,{waitUntil: 'networkidle2'});
+        await page.goto('https://ranobes.net/up/tyranny-of-steel/',{waitUntil: 'networkidle2'})
+
+        await page.screenshot({path: 'result.png'});
+        await browser.close()
+        xvfb.stop();
+        res.send("done")
+    })()
+
 })
 
 
@@ -409,6 +439,15 @@ app.get('/http_get', function(req,res){
 
         try {
 
+            //====== forcing non headless chrome on servers/computers with no display port by using fake in memory display
+            var xvfb = new Xvfb({
+                silent : true,
+                xvfb_args : ["-screen", "0", "1280x720x24", "-ac"],
+            });
+
+            xvfb.start((err)=>{ if(err) console.error(err)})
+
+
             //adbloc
             if(req.query.turbo_mode && req.query.turbo_mode == 'true'){ //if turbo mode is turn on
                 puppeteer.use(AdblockerPlugin({blockTrackers: true,}));//disable atracker together with ads
@@ -429,11 +468,18 @@ app.get('/http_get', function(req,res){
             //             "--disable-setuid-sandbox"
             //         ]
             //     });
+                // const browser = await puppeteer.launch({
+                //     headless:false,
+                //     args: ['--no-sandbox', '--disable-setuid-sandbox']
+                // });
+
+                //wrk with display driver version //Disable on windows during developemnt 
                 const browser = await puppeteer.launch({
                     headless:false,
-                    args: ['--no-sandbox', '--disable-setuid-sandbox']
+                    defaultViewport:null,
+                    args: ['--no-sandbox', '--start-fullscreen','--display='+xvfb._display]
                 });
-
+                
 
                 // var [page] = await browser.pages();
                 // var page = await browser.newPage();
@@ -444,7 +490,7 @@ app.get('/http_get', function(req,res){
 
                 
                 // await page.setViewport({ width:1920, height:1080})//set browser page scren size
-                await page.setViewport({ width:768, height:928})//set browser page scren size//ipad size//potrait
+                // await page.setViewport({ width:768, height:928})//set browser page scren size//ipad size//potrait
                 
                 // await page.setUserAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36');
                 await page.setUserAgent('Mozilla/5.0 (iPad; CPU OS 14_7_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Mobile/15E148 Safari/604.1');
@@ -488,6 +534,8 @@ app.get('/http_get', function(req,res){
                 let pages = await browser.pages()
                 await Promise.all(pages.map(page =>page.close()))
                 await browser.close()
+
+                xvfb.stop();//close fake display port  //Disable on windows during developemnt 
 
                 // res.send({director_module_to_use :cleaned_site_domain_url,//compression seem to be 1kb effective
                 //     page_dom:  minify(page_body, {
