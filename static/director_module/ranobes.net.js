@@ -1,3 +1,24 @@
+/* 
+
+    idea :
+
+    if link contain book intro : look for image link etc only found in intro page
+        -> if above, save book cover page image, en formulate link that leads to chapters links table of contents (its basically pages that contains links to book chaptr links)
+
+        -> option 2 ( when point above is incorrect ) : (assumes the links is from book chapter links table of content/table of links pages hahahahaha ), then find what link number is for final page that contains book chapters links. once we have that number then we create our links array from links container page 1 to links container page number we extracted above. 
+
+    call function that will extract links contained from each of the table of links pages.
+
+    call function that will loop through all the books chapter links en extract the chapter text as well as the title
+        -> some of the text are added on the style sheet en needs to be sorted, a function does that then save the chapter details including text to object array ready to be sent for epub packging when all book chapters have been retrieved
+
+
+
+*/
+
+
+
+
 var b = document.location.protocol+"//"+document.location.hostname+":"+document.location.port;//this website url
 
 //select html element containing chapters
@@ -13,6 +34,7 @@ function toc_contents_scraping(){
     var toc_firt_page_link_template = "";
 
 
+    var toc_container_pages = document.getElementById("request_html_container").querySelectorAll(".pages a");//table of contants container pages
 
 
     if(book_main_age && book_main_age[0] && book_main_age[0].href){ //https://ranobes.net/novels/693420-supremacy-games-v216510.html
@@ -20,14 +42,12 @@ function toc_contents_scraping(){
         chapter_links_container.book_cover_image_link  = book_main_age[0].href;//save book image url
 
        rectrive_book_toc_pages(
-        document.getElementById("request_html_container").querySelectorAll(".r-fullstory-chapters-foot a")[1].href.replace(b, 'https://ranobes.net')
+        document.getElementById("request_html_container").querySelectorAll(".r-fullstory-chapters-foot a")[1].href.replace(b, 'https://ranobes.net'), true
        );//redirect and request toc contents webpage 
 
        // console.log( b,document.getElementById("request_html_container").querySelectorAll(".r-fullstory-chapters-foot a")[1].href.replace(b, 'https://ranobes.net'))
        return;
     }
-
-    var toc_container_pages = document.getElementById("request_html_container").querySelectorAll(".pages a");//table of contants container pages
 
     if(!book_main_age || !book_main_age[0] || !book_main_age[0].href){//give some frinedly advice//https://ranobes.net/novels/693420-supremacy-games-v216510.html
 
@@ -73,7 +93,7 @@ function toc_contents_scraping(){
 
 
     //send website to server to request webpage
-    async function rectrive_book_toc_pages(book_url){//get books toc links form toc container pages ++++++++++++++++
+    async function rectrive_book_toc_pages(book_url, is_called_by_book_details_extractor){//get books toc links form toc container pages ++++++++++++++++
         // console.log(book_url)
         alert_1("show")//show wait alert
         //clean book link/url
@@ -104,6 +124,12 @@ function toc_contents_scraping(){
 
             //save book iage link
             // chapter_links_container.book_website_link = book_image_url;
+
+            //if called by is_called_by_book_details_extractor code
+            if(is_called_by_book_details_extractor == true){
+                toc_container_pages = document.getElementById("request_html_container").querySelectorAll(".pages a");//set variable data
+                console.log( toc_container_pages )
+            }
 
             book_chapter_links();//call links extrator
         })
@@ -156,11 +182,15 @@ function toc_contents_scraping(){
             if( retrived_toc_pages == 1){//first time function run
                 var toc_firt_page_link = toc_container_pages[retrived_toc_pages].href.split("/");//extract link url, en turn to array//en save as 
                 toc_firt_page_link.splice( toc_firt_page_link.length - 2, 2);//remove link last eleents
+                // console.log(".... ", toc_firt_page_link)
                 toc_firt_page_link.forEach(function(arr){ 
+                    // console.log("1....... ",toc_firt_page_link_template)
                    toc_firt_page_link_template = toc_firt_page_link_template + arr + "/";
+                //    console.log("2....... ",toc_firt_page_link_template)
                 });//create link with last elements removed
 
-
+                //fix domain by replacing with the book website domain
+                toc_firt_page_link_template = toc_firt_page_link_template.trim().replace(b, 'https://ranobes.net')
                     
                 //progress alert
                 alert_1("hide")//hide wait alert
@@ -175,6 +205,8 @@ function toc_contents_scraping(){
 
             //ask server for page dom
             rectrive_book_toc_pages(toc_firt_page_link_template + retrived_toc_pages );//call to extract book chapters link
+
+
             if(retrived_toc_pages == Number(get_toc_container_page_last_page_number.innerText)){ //hide progress alert
                 div_hide_show("please_wait_2", "hide")//hide progress alert busy
             }
