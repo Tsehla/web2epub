@@ -616,18 +616,26 @@ app.post("/cook_epub", function(req, res){
     var date = new Date()
     // var book_name_new = req.body.book_save_name.replace(/[+',?*{}|":;'&%$#@!`~+_]/gi,"-") +' - '+req.body.book_chapters[1].title.toString().replace(/[+',?*{}|":;'&%$#@!`~+_]/gi,"-")+' - '+req.body.book_chapters[req.body.book_chapters.length - 1].title+'  Date -'+ date.getDate()+'.'+date.getMonth()+'.'+date.getFullYear()+' Time -'+date.getHours()+'.'+date.getMinutes()+'.'+date.getSeconds()+' .epub';//clean epub name of illegal file name //nice way of cleaning not working to remove "?" dont know why dont care, now calling big gunds, the functions hahhahahahaha hahahahahaha
 
-    function the_big_guns_string_cleaner_the_not_so_elegant_way(string = "hello world"){
+    function the_big_guns_string_cleaner_the_not_so_elegant_way(string = "hello world"){ /* hahahaha, now back on this cause it failed to clean name eb make it filename friendly en i read 'big guns' hahaha, funny cause i got a simple way of cleaning this on internet hahaha phela i really strugled with this cleaning thing the time i was doing it : time stamp 24/nov/2021 17:14 */
 
-        var string_to_array = string.split("")
-        var cleaned_string = "";//contained processed string
-        string_to_array.forEach(function(character){
-             cleaned_string = cleaned_string + character.replace(/\[/gi, " ").replace(/\+/gi, " ").replace(/'/gi, " ").replace(/,/gi, " ").replace(/\?/gi, " ").replace(/\*/gi, " ").replace(/{/gi, " ").replace(/}/gi, " ").replace(/\|/gi, " ").replace(/:/gi, " ").replace(/"/gi, " ").replace(/&/gi, " ").replace(/;/gi, " ").replace(/%/gi, " ").replace(/\$/gi, " ").replace(/#/gi, " ").replace(/@/gi, " ").replace(/!/gi, " ").replace(/`/gi, " ").replace(/~/gi, " ").replace(/_/gi, " ").replace(/]/gi, " ").replace(/\//gi, " ").replace(/\\/gi, " ");
+    
+        // the so called big guns way, using boulder as a hummer, SO WHAT OVER KILL IS MY WAY, even if the boulder is way lacking HAHAHAHA
+        // var string_to_array = string.split("")
+        // var cleaned_string = "";//contained processed string
+        // string_to_array.forEach(function(character){
+        //      cleaned_string = cleaned_string + character.replace(/\[/gi, " ").replace(/\+/gi, " ").replace(/'/gi, " ").replace(/,/gi, " ").replace(/\?/gi, " ").replace(/\*/gi, " ").replace(/{/gi, " ").replace(/}/gi, " ").replace(/\|/gi, " ").replace(/:/gi, " ").replace(/"/gi, " ").replace(/&/gi, " ").replace(/;/gi, " ").replace(/%/gi, " ").replace(/\$/gi, " ").replace(/#/gi, " ").replace(/@/gi, " ").replace(/!/gi, " ").replace(/`/gi, " ").replace(/~/gi, " ").replace(/_/gi, " ").replace(/]/gi, " ").replace(/\//gi, " ").replace(/\\/gi, " ");
             
-        });
-        return cleaned_string
+        // });
+        // return cleaned_string
+
+        var cleaned_string = string.replace(/[\\/:*?"<>|]/g, '')
+
+        //THIS IS THE INTERNET GUY WAY : HAHAHA
+        return cleaned_string;
+
     }
  
-    var book_name_new = the_big_guns_string_cleaner_the_not_so_elegant_way(req.body.book_save_name) +' - '+the_big_guns_string_cleaner_the_not_so_elegant_way(req.body.book_chapters[1].title)+' - '+req.body.book_chapters[req.body.book_chapters.length - 1].title+'  Date -'+ date.getDate()+'.'+date.getMonth()+'.'+date.getFullYear()+' Time -'+date.getHours()+'.'+date.getMinutes()+'.'+date.getSeconds()+' .epub';//clean epub name of illegal file name 
+    var book_name_new = req.body.book_save_name.replace(/[\\/:*?"<>|]/g, '') +' - '+req.body.book_chapters[1].title.replace(/[\\/:*?"<>|]/g, '')+' - '+req.body.book_chapters[req.body.book_chapters.length - 1].title.replace(/[\\/:*?"<>|]/g, '')+'  Date -'+ date.getDate()+'.'+date.getMonth()+'.'+date.getFullYear()+' Time -'+date.getHours()+'.'+date.getMinutes()+'.'+date.getSeconds()+' .epub';//clean epub name of illegal file name 
 
     var options = {
         title: req.body.book_name,
