@@ -533,7 +533,8 @@ app.get('/http_get', function(req,res){
                 // await browser.close();
                 let pages = await browser.pages()
                 await Promise.all(pages.map(page =>page.close()))
-                await browser.close()
+                // await browser.close()
+                await browser.process().kill('SIGKILL');//force close browser, normal way above not working as should, result in profile access error
 
                 xvfb.stop();//close fake display port  //Disable on windows during developemnt 
 
