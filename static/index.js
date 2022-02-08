@@ -311,9 +311,13 @@ function chapters_select_unselect_all(action_type){
 //++++++++++ book packing to epub
 var check_chapters_checkbox_array = [];//saved links to check chapters
 var retrived_chapter_link_text = [];//save retrived and processed chapter text
-function epub_pack(){
+function epub_pack(new_book){
 
   
+    // if(new_book){ //if its new book en not continue; reset variables
+    //     check_chapters_checkbox_array = [];//saved links to check chapters
+    //     retrived_chapter_link_text = [];//save retrived and processed chapter text
+    // }
 
     //get book selected chapters
     ////   check if quick select option is chosen and use it, if no change then check the second below {CHOOSING BELOW WILL CHECK OR UNCHEK CHAPTERS ON CHAPTER VIEW}

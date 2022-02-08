@@ -440,12 +440,12 @@ app.get('/http_get', function(req,res){
         try {
 
             //====== forcing non headless chrome on servers/computers with no display port by using fake in memory display
-            var xvfb = new Xvfb({
-                silent : true,
-                xvfb_args : ["-screen", "0", "1280x720x24", "-ac"],
-            });
+            // var xvfb = new Xvfb({
+            //     silent : true,
+            //     xvfb_args : ["-screen", "0", "1280x720x24", "-ac"],
+            // });
 
-            xvfb.start((err)=>{ if(err) console.error(err)})
+            // xvfb.start((err)=>{ if(err) console.error(err)})
 
 
             //adbloc
@@ -477,7 +477,8 @@ app.get('/http_get', function(req,res){
                 const browser = await puppeteer.launch({
                     headless:false,
                     defaultViewport:null,
-                    args: ['--no-sandbox', '--start-fullscreen','--display='+xvfb._display]
+                    // args: ['--no-sandbox', '--start-fullscreen','--display='+xvfb._display]
+                    args: ['--no-sandbox']
                 });
                 
 
@@ -536,7 +537,7 @@ app.get('/http_get', function(req,res){
                 // await browser.close()
                 await browser.process().kill('SIGKILL');//force close browser, normal way above not working as should, result in profile access error
 
-                xvfb.stop();//close fake display port  //Disable on windows during developemnt 
+                // xvfb.stop();//close fake display port  //Disable on windows during developemnt 
 
                 // res.send({director_module_to_use :cleaned_site_domain_url,//compression seem to be 1kb effective
                 //     page_dom:  minify(page_body, {

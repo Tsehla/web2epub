@@ -128,7 +128,7 @@ function toc_contents_scraping(){
             //if called by is_called_by_book_details_extractor code
             if(is_called_by_book_details_extractor == true){
                 toc_container_pages = document.getElementById("request_html_container").querySelectorAll(".pages a");//set variable data
-                console.log( toc_container_pages )
+                // console.log( toc_container_pages )
             }
 
             book_chapter_links();//call links extrator
@@ -247,7 +247,8 @@ function chapter_contents_scraping(){
 
     //collect chapter texts
     book_text.forEach(string =>{
-        chapter_text = chapter_text  + string.outerText;
+        chapter_text = chapter_text  + string.outerText + "<br /> <br />";
+        // console.log(string.outerText)
 
     })
 
