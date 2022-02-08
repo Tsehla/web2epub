@@ -315,7 +315,7 @@ function epub_pack(new_book){
 
   
     // if(new_book){ //if its new book en not continue; reset variables
-    //     check_chapters_checkbox_array = [];//saved links to check chapters
+    //     // check_chapters_checkbox_array = [];//saved links to check chapters
     //     retrived_chapter_link_text = [];//save retrived and processed chapter text
     // }
 
