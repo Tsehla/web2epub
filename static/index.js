@@ -426,7 +426,11 @@ function epub_pack(){
             if(results == "html_error" || err !== "success"){
                 div_hide_show("please_wait_2", "hide");//hide busy
                 console.log("chapter content request erro : " + err)
-                return  alert_box_1(`Error requestion ${check_chapters_checkbox_array[chapter_number].chapter_link_text}, from server .`, "","","alert");//give alert;//if not give err
+
+                //do retry if allowed
+                auto_continue();
+
+                return  alert_box_1(`Error requesting ${check_chapters_checkbox_array[chapter_number].chapter_link_text}, from server .`, "","","alert");//give alert;//if not give err
             }
 
             //get chapteer book contents
@@ -520,6 +524,23 @@ function epub_download(url){//download produced epub
     window.open(url, "_blank")
 }
 
+
+//if program experiences internet connection error//this does not apply to when program hangs
+var auto_continue = true;//if auto continue is allowed by user
+
+var auto_continue_retries = 0; //will retry 30 times max
+
+function auto_continue(){
+
+    if(auto_continue == false || auto_continue_retries == 50){ //if fifty retries
+        return;// end retries
+    }
+    setTimeout(request_chapter_webpage(its_continue), 5000); 
+
+    alert_1("hide")//hide wait alert
+
+    auto_continue_retries = auto_continue_retries + 1; //increment auto continue
+}
 
 
 

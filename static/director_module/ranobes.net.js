@@ -106,6 +106,7 @@ function toc_contents_scraping(){
                 alert_box_1(alert_text = "Error retrieving book contents.", "", "", "alert" );//give alert//simple alert
                 alert_1("hide")//hide wait alert
                 div_hide_show("please_wait_2", "hide")//hide progress alert busy
+
                 return console.log(results);
             }
             if(results == "module_error"){//module not aailable
