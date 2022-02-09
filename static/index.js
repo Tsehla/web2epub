@@ -372,17 +372,18 @@ function epub_pack(){
             ${window.location.protocol + '://' + window.location.hostname}
             </div>
             </div>`
-        })
+    })
 
-      var checked_book_divs = $('#chapters_selection_container input:checked');//get checked, checkboxex if any
+    var checked_book_divs = $('#chapters_selection_container input:checked');//get checked, checkboxex if any
 
-      if(checked_book_divs.length < 1){//check if any checkboxes were checked
+    if(checked_book_divs.length < 1){//check if any checkboxes were checked
             
           return alert_box_1(`Select some chapters to transform to epub.`, "","","alert");//give alert;//if not give err
-      }
-      checked_book_divs.each(function() {//get input check within the div then loop 
+    }
+    
+    checked_book_divs.each(function() {//get input check within the div then loop 
         check_chapters_checkbox_array.push(chapter_links_container.book_chapters[Number($(this).attr('name'))]);//get checkbox div node name, turn result to number, retrive chapter link matching position number in array indexes, save link to new array
-      });
+        // });
 
         //   console.log(check_chapters_checkbox_array)
 
@@ -394,7 +395,7 @@ function epub_pack(){
 
         request_chapter_webpage();//start chapter processing
 
-    }
+    })
     //request chapter webage from server
     var chapter_number = 0;//track processed chapters
 
@@ -513,7 +514,8 @@ function epub_pack(){
         });
     }
 
-// }
+};
+
 function epub_download(url){//download produced epub
     window.open(url, "_blank")
 }
