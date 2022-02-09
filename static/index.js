@@ -427,10 +427,12 @@ function epub_pack(){
                 div_hide_show("please_wait_2", "hide");//hide busy
                 console.log("chapter content request erro : " + err)
 
-                //do retry if allowed
-                auto_continue();
+                alert_box_1(`Error requesting ${check_chapters_checkbox_array[chapter_number].chapter_link_text}, from server .`, "","","alert");//give alert;//if not give err
 
-                return  alert_box_1(`Error requesting ${check_chapters_checkbox_array[chapter_number].chapter_link_text}, from server .`, "","","alert");//give alert;//if not give err
+                //do retry if allowed
+                auto_continue_fn();
+
+                return  
             }
 
             //get chapteer book contents
@@ -518,6 +520,33 @@ function epub_pack(){
         });
     }
 
+
+    //if program experiences internet connection error//this does not apply to when program hangs
+    var auto_continue = true;//if auto continue is allowed by user
+
+    var auto_continue_retries = 0; //will retry 30 times max
+
+    function auto_continue_fn(){
+
+        if(auto_continue == false || auto_continue_retries == 50){ //if fifty retries
+            return;// end retries
+        }
+
+
+        alert_box_1(`Error requesting ${check_chapters_checkbox_array[chapter_number].chapter_link_text}, from server . Will auto retry in 10seconds.. Please wait!! <br >  Retry no : ${auto_continue_retries + 1}`, "","","alert");//give alert;//if not give err
+
+        setTimeout(function(){
+
+            request_chapter_webpage(true);
+            alert_1("hide")//hide wait alert
+        
+        }, 10000); 
+
+
+
+        auto_continue_retries = auto_continue_retries + 1; //increment auto continue
+    }
+
 };
 
 function epub_download(url){//download produced epub
@@ -525,28 +554,7 @@ function epub_download(url){//download produced epub
 }
 
 
-//if program experiences internet connection error//this does not apply to when program hangs
-var auto_continue = true;//if auto continue is allowed by user
 
-var auto_continue_retries = 0; //will retry 30 times max
-
-function auto_continue(){
-
-    if(auto_continue == false || auto_continue_retries == 50){ //if fifty retries
-        return;// end retries
-    }
-    
-    setTimeout(function(){
-
-        request_chapter_webpage(true);
-        alert_1("hide")//hide wait alert
-    
-    }, 100000); 
-
-
-
-    auto_continue_retries = auto_continue_retries + 1; //increment auto continue
-}
 
 
 
