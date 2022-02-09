@@ -129,6 +129,12 @@ function url_main_help_button(){//open help image
 var body_toc_book_name = "";//save book table of content url
 $("#convert_to_epub_main_input").on('keypress',function(event){//set event listner on table of content url input box
     if(event.keyCode == 13){
+
+        //reset of old contents //when new processing is started without page reload
+        check_chapters_checkbox_array = [];//saved links to check chapters
+        retrived_chapter_link_text = [];//save retrived and processed chapter text
+        chapter_number = 0; //reset
+
         
         var table_of_content_url = document.getElementById("convert_to_epub_main_input").value;
         // console.log(table_of_content_url)
@@ -311,13 +317,13 @@ function chapters_select_unselect_all(action_type){
 //++++++++++ book packing to epub
 var check_chapters_checkbox_array = [];//saved links to check chapters
 var retrived_chapter_link_text = [];//save retrived and processed chapter text
-function epub_pack(new_book){
+function epub_pack(){
 
-  
-    // if(new_book){ //if its new book en not continue; reset variables
-    //     // check_chapters_checkbox_array = [];//saved links to check chapters
-    //     retrived_chapter_link_text = [];//save retrived and processed chapter text
-    // }
+
+    //reset if run withut page reload
+    check_chapters_checkbox_array = [];//saved links to check chapters
+    retrived_chapter_link_text = [];//save retrived and processed chapter text
+    chapter_number = 0; //reset
 
     //get book selected chapters
     ////   check if quick select option is chosen and use it, if no change then check the second below {CHOOSING BELOW WILL CHECK OR UNCHEK CHAPTERS ON CHAPTER VIEW}
@@ -378,15 +384,15 @@ function epub_pack(new_book){
         check_chapters_checkbox_array.push(chapter_links_container.book_chapters[Number($(this).attr('name'))]);//get checkbox div node name, turn result to number, retrive chapter link matching position number in array indexes, save link to new array
       });
 
-    //   console.log(check_chapters_checkbox_array)
+        //   console.log(check_chapters_checkbox_array)
 
-    //book advanced option ---------
+        //book advanced option ---------
 
-    //create epub 3 ---------
+        //create epub 3 ---------
 
-    //set download request timer. but kinda useless without a proxy ------------
+        //set download request timer. but kinda useless without a proxy ------------
 
-    request_chapter_webpage();//start chapter processing
+        request_chapter_webpage();//start chapter processing
 
     }
     //request chapter webage from server

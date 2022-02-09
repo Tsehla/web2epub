@@ -242,7 +242,7 @@ function chapter_contents_scraping(){
     // console.log(book_text[0].textContent)
     // console.log("::::: ",book_text[0],book_text[0].textContent,book_text)
 
-//    return book_text[0].textContent;
+    //    return book_text[0].textContent;
     var chapter_text = "";//contains chapter texts
 
     //collect chapter texts
