@@ -383,7 +383,7 @@ function epub_pack(){
     
     checked_book_divs.each(function() {//get input check within the div then loop 
         check_chapters_checkbox_array.push(chapter_links_container.book_chapters[Number($(this).attr('name'))]);//get checkbox div node name, turn result to number, retrive chapter link matching position number in array indexes, save link to new array
-        // });
+        });
 
         //   console.log(check_chapters_checkbox_array)
 
@@ -395,7 +395,7 @@ function epub_pack(){
 
         request_chapter_webpage();//start chapter processing
 
-    })
+    // })
     //request chapter webage from server
     var chapter_number = 0;//track processed chapters
 
@@ -535,9 +535,15 @@ function auto_continue(){
     if(auto_continue == false || auto_continue_retries == 50){ //if fifty retries
         return;// end retries
     }
-    setTimeout(request_chapter_webpage(its_continue), 5000); 
+    
+    setTimeout(function(){
 
-    alert_1("hide")//hide wait alert
+        request_chapter_webpage(true);
+        alert_1("hide")//hide wait alert
+    
+    }, 100000); 
+
+
 
     auto_continue_retries = auto_continue_retries + 1; //increment auto continue
 }
