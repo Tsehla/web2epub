@@ -475,10 +475,12 @@ app.get('/http_get', function(req,res){
 
                 //wrk with display driver version //Disable on windows during developemnt 
                 const browser = await puppeteer.launch({
-                    headless:false,
+                    // headless:false,
+                    // headless:true,
                     defaultViewport:null,
                     // args: ['--no-sandbox', '--start-fullscreen','--display='+xvfb._display]
-                    args: ['--no-sandbox']
+                    // args: ['--no-sandbox']
+                    args: ['--start-maximized','--no-sandbox','--disable-setuid-sandbox','--single-process','--no-zygote'],
                 });
                 
 
@@ -494,8 +496,17 @@ app.get('/http_get', function(req,res){
                 // await page.setViewport({ width:768, height:928})//set browser page scren size//ipad size//potrait
                 
                 // await page.setUserAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36');
-                await page.setUserAgent('Mozilla/5.0 (iPad; CPU OS 14_7_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Mobile/15E148 Safari/604.1');
+                // await page.setUserAgent('Mozilla/5.0 (iPad; CPU OS 14_7_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Mobile/15E148 Safari/604.1');
 
+
+                await page.setViewport( { 'width' : 1920, 'height' : 1080 } );
+
+                page.setDefaultNavigationTimeout( 90000 );
+            
+                // await page.setUserAgent('Mozilla/5.0 (iPad; CPU OS 14_7_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Mobile/15E148 Safari/604.1');//tablet ua
+            
+                await page.setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36');//desktop ua
+                
                 if(req.query.turbo_mode && req.query.turbo_mode == 'true'){ //if turbo mode is turn on
 
                     // console.log('turbo mode : ',req.query.turbo_mode == 'true', typeof req.query.turbo_mode );
@@ -534,7 +545,7 @@ app.get('/http_get', function(req,res){
                 // await browser.close();
                 let pages = await browser.pages()
                 await Promise.all(pages.map(page =>page.close()))
-                // await browser.close()
+                await browser.close()
                 await browser.process().kill('SIGKILL');//force close browser, normal way above not working as should, result in profile access error
 
                 // xvfb.stop();//close fake display port  //Disable on windows during developemnt 
