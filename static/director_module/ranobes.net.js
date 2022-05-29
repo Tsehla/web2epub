@@ -68,10 +68,11 @@ function toc_contents_scraping(){
 
             //loop through result and save link with its text or title
            if(index > 0){ //to skip "table of contents" link retrived
-
+        //    console.log(' ::::: ',data.querySelector("div h6.title").textContent, ' ::::: ',data.textContent.trim().split(":")[0],' :::: ',data.innerHTML)
                 chapter_links_container.book_chapters.unshift({
                     chapter_link: data.href.trim().replace(b, 'https://ranobes.net'),//replace link referal to local server to remote server hosting the book
-                    chapter_link_text: data.textContent.trim().split("\n")[0],//clean chapter names before saving
+                    // chapter_link_text: data.textContent.trim().split("\n")[0],//clean chapter names before saving//NEW LINE HAS BEEN CHANGED TO ':' IN LATEST WEBSITE UPGRADE
+                    chapter_link_text:data.querySelector("div h6.title").textContent//get/extract chapters title name/text
                 })
 
                 //get book cover image link
