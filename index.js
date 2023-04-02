@@ -476,7 +476,7 @@ app.get('/http_get', function(req,res){
                 //wrk with display driver version //Disable on windows during developemnt 
                 const browser = await puppeteer.launch({
                     // headless:false,
-                    // headless:true,
+                    headless:true,
                     defaultViewport:null,
                     // args: ['--no-sandbox', '--start-fullscreen','--display='+xvfb._display]
                     // args: ['--no-sandbox']
